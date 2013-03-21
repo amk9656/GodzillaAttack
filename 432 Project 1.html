@@ -7,11 +7,13 @@
 	<script src = "Drawing.js"></script>
 	<script src = "Levels.js"></script>
 	<script src = "Enemies.js"></script>
+	<script src = "utils.js"></script>
 	<script>
 		var CANVAS_WIDTH = 640;
 		var CANVAS_HEIGHT = 480;
 		
 		var ctx;
+		var godzilla;
 		window.addEventListener("load",initGame);		
 		
 		function initGame()
@@ -20,8 +22,14 @@
 		canvasElement.width = CANVAS_WIDTH;
 		canvasElement.height = CANVAS_HEIGHT;
 		ctx = canvasElement.getContext("2d");
+		godzilla = new Godzilla();
+		console.log(godzilla);
+		animateGodzilla();
+		
+		
 		}
 	</script>
+	
 </head>
 <body>
 	<canvas>
