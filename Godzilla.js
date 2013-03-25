@@ -35,10 +35,7 @@
 		window.addEventListener("keyup",function(e){
 			console.log("keyup=" + e.keyCode);
 			keydown[e.keyCode] = false;
-		});
-		
-		
-		
+		});		
 		return godzilla;
 	}
 	
@@ -51,20 +48,7 @@
 		return 1/fps;
 	}
 	
-	
-	
-	function animateGodzilla()
-	{
-		var deltaTime = calculateDeltaTime();
-		
-		update(deltaTime);
-		drawBackground();
-		drawSelf();
-		window.requestAnimFrame(animateGodzilla);
-		
-	}
-	
-	function update(deltaTime){		
+	function godzillaUpdate(deltaTime){		
 		godzilla.x = clamp(godzilla.x, 0, CANVAS_WIDTH - (godzilla.width));
 		godzilla.y = clamp(godzilla.y, 0, CANVAS_HEIGHT - (godzilla.height));
 		
@@ -82,7 +66,7 @@
 		}
 	}
 	
-	function drawSelf()
+	function drawGodzilla()
 	{
 		godzilla.draw();
 	}

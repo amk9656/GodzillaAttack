@@ -4,6 +4,18 @@
 
 //GLOBALS
 
+function Animate()
+{
+	var deltaTime = calculateDeltaTime();		
+	enemiesUpdate(deltaTime);
+	godzillaUpdate(deltaTime);
+	drawBackground();
+	drawGodzilla();
+	drawHelicopter();
+	
+	window.requestAnimFrame(Animate);		
+}
+
 function drawBackground()
 {
 	ctx.fillStyle="gray";
