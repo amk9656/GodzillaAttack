@@ -47,3 +47,17 @@ function getRandom(min, max) {
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
+
+/*
+	Function Name: calculateDeltaTime()
+	Return Value: calculated time difference in between frames
+*/
+function calculateDeltaTime()
+{
+	var now,fps;
+	now = (+new Date);
+	fps = 1000 / (now - lastTime);
+	fps = clamp(fps, 12, 60);
+	lastTime = now;
+	return 1/fps;
+}

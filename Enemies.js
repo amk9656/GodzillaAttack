@@ -6,32 +6,23 @@
 var lastTime = 0;
 var directionTime = 0;
 var randomCounter = 0;
+
 function Helicopter()
 {
 	var helicopter = {
-				color: "red",
-				x:300,
-				y:300,
-				width:40,
-				height:40,
-				speed:50,
-				draw: function()
-				{
-					ctx.fillStyle = this.color;
-					ctx.fillRect(this.x,this.y, this.width, this.height);
-				}
+		color: "red",
+		x:300,
+		y:300,
+		width:40,
+		height:40,
+		speed:50,
+		draw: function()
+		{
+			ctx.fillStyle = this.color;
+			ctx.fillRect(this.x,this.y, this.width, this.height);
+		}
 	};
 	return helicopter;
-}
-
-function calculateDeltaTime()
-{
-	var now,fps;
-	now = (+new Date);
-	fps = 1000 / (now - lastTime);
-	fps = clamp(fps, 12, 60);
-	lastTime = now;
-	return 1/fps;
 }
 
 function drawHelicopter()

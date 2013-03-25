@@ -4,12 +4,16 @@
 
 //GLOBALS
 
+// start drawing
 function Animate()
 {
-	var deltaTime = calculateDeltaTime();		
+	var deltaTime = calculateDeltaTime();	
+
 	enemiesUpdate(deltaTime);
 	godzillaUpdate(deltaTime);
+
 	drawBackground();
+	level.getSection(level.currentSection).draw();
 	drawGodzilla();
 	drawHelicopter();
 	
