@@ -5,9 +5,58 @@
         <meta name=description content="NWT2 - Project 1 : Godzilla Attack">
         <meta name=viewport content="width=device-width, initial-scale=1">
         <title>Godzilla Attack</title>
-        <link rel=stylesheet href="css/style.css">
+        <link rel="stylesheet" href="styles/normalize.css">
+        <link rel=stylesheet href="styles/style.css">
     </head>
     <body>
-        
+        <header id="header" class="shadow">
+        	<h1 id="subtitle">Godzilla is coming to destroy the city kakaka...</h1>
+        	<h3 id="title">Godzilla Attack</h3>
+        </header>
+        <section id="play" class="shadow">
+        	<button id="play_button" type="button">play game</button>
+        </section>
+        <section id="main" class="shadow">
+        	<div id="concept">
+        		<h5 class="shadow">concept</h5>
+        		<img src="images/design_doc/image01.jpg" alt="concept art 1">
+        		<img src="images/design_doc/image02.jpg" alt="concept art 2">
+        		<p>
+        			Players play as godzilla in a top down world and try to destroy all the building in the city. Inspiration taken from the game Rampage.
+        		</p>
+        	</div>
+        	<div id="story">
+        		<h5 class="shadow">story</h5>
+        		<p>
+        			Godzilla wants to go back home but there is a city in his way. Take control of Godzilla and help him to destroy the city and get back home safely! Don't spare a life!
+        		</p>
+        	</div>
+        	<div id="gameplay">
+        		<h5 class="shadow">gameplay</h5>
+        		<p>
+        			Players will take control of Godzilla and try to destroy all the buildings in the city.<br>The player will be attacked by helicopters and tanks and Godzilla must destroy them as well to be able to proceed safely.<br>Eventually, you are going to bring Godzilla to his cave and finish the level.<br>Occasionally power-ups will drop to enhance Godzilla’s abilities such as atomic breath or harder scales.<br>Atomic breath will destroy everything within a certain range in front of Godzilla and harder scales will increase the player’s health.
+        		</p>
+        	</div>
+        	<div id="controls">
+        		<h5 class="shadow">controls</h5>
+        		<p>
+					Players will use the arrow keys to move and the space bar to attack. If the player has power-ups then they can use the power-up with Q, W and E keys.
+        		</p>
+        	</div>
+        	<div id="ui">
+        		<h5 class="shadow">ui</h5>
+        		<p>
+					The user interface will be fairly clean, the only things on the UI will be Godzilla’s health and number of buildings left to destroy.
+        		</p>
+        	</div>
+        </section>
+        <footer id="footer">
+        	Andrew Kaufman & Nelson Liu; New Media Web Tech II Spring 2012; Project I
+        </footer>
+        <script type="text/javascript" charset="utf-8">
+        	document.querySelector("#play_button").addEventListener("click", function() {
+        		window.location = "game.html";
+        	});
+        </script>
     </body>
 </html>
