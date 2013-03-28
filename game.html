@@ -11,26 +11,28 @@
 		<script src = "scripts/Enemies.js"></script>
 		<script src = "scripts/utils.js"></script>
 		<script>
+		"use strict";
 		var CANVAS_WIDTH = 640,
 			CANVAS_HEIGHT = 480;
 
 		var ctx;
 		var godzilla,
-			helicopter,
+			helicopter = [],
 			level;
 
 		window.addEventListener("load",initGame);		
 
 		function initGame()
 		{
+			
 			var canvasElement = document.querySelector("#canvas");
 			canvasElement.width = CANVAS_WIDTH;
 			canvasElement.height = CANVAS_HEIGHT;
 			ctx = canvasElement.getContext("2d");
 			godzilla = new Godzilla();
-			helicopter = new Helicopter();
+			helicopter.push(new Helicopter());
 			level = new Level("1x1");
-
+			
 			Animate();
 		}
 		</script>

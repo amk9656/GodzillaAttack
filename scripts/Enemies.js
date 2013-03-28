@@ -1,5 +1,5 @@
 //Enemy scripts go here
-
+"use strict";
 //CONSTANTS
 
 //GLOBALS
@@ -10,6 +10,7 @@ var randomCounter = 0;
 function Helicopter()
 {
 	var helicopter = {
+		
 		color: "red",
 		x:300,
 		y:300,
@@ -27,7 +28,10 @@ function Helicopter()
 
 function drawHelicopter()
 {
-	helicopter.draw();
+	helicopter.forEach(function(heli)
+	{
+		heli.draw();
+	});
 }
 
 function enemiesUpdate(deltaTime)
@@ -56,6 +60,7 @@ function enemiesUpdate(deltaTime)
 	{
 		helicopter.y += helicopter.speed * deltaTime;
 	}
+	handleCollisions();
 	//console.log(randomCounter);
 	//console.log(directionTime);
 	//console.log(helicopter.x);

@@ -62,6 +62,10 @@ function Building(type, position) {
 		"type": type,
 		"wrecked": false,
 		"position": position,
+		"x": position.x,
+		"y": position.y,
+		"width": 30,
+		"height": 30,
 		"powerups": [],
 		"draw": function ()
 		{

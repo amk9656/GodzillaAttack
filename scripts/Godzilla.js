@@ -1,5 +1,5 @@
 //Godzilla's controls go here
-
+"use strict";
 //CONSTANTS
 var KEYBOARD = {
 	"KEY_LEFT":37,
@@ -22,6 +22,7 @@ function Godzilla()
 		width:75,
 		height: 65,
 		speed: 200,
+		health:100,
 		draw: function ()
 		{
 			ctx.fillStyle = this.color;
@@ -53,6 +54,7 @@ function godzillaUpdate(deltaTime){
 	if(keydown[KEYBOARD.KEY_DOWN]){
 		godzilla.y += godzilla.speed * deltaTime;
 	}
+	handleCollisions();
 }
 
 function drawGodzilla()
