@@ -4,7 +4,10 @@
 
 //GLOBALS
 
-// start drawing
+/*
+	Function: Animate()
+	Desc: redraw screen at 60 fps
+*/
 function Animate()
 {
 	var deltaTime = calculateDeltaTime();	
@@ -12,7 +15,9 @@ function Animate()
 	enemiesUpdate(deltaTime);
 	godzillaUpdate(deltaTime);
 
-	drawBackground();
+	ctx.fillStyle="gray";
+	ctx.fillRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
+
 	level.getSection(level.currentSection).draw();
 	drawGodzilla();
 	drawHelicopter();
@@ -21,6 +26,7 @@ function Animate()
 	
 }
 
+<<<<<<< Updated upstream
 function drawBackground()
 {
 	ctx.fillStyle="gray";
@@ -46,3 +52,5 @@ function handleCollisions(){
 		}
 	});
 }
+=======
+>>>>>>> Stashed changes

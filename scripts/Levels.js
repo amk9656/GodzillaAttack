@@ -13,9 +13,20 @@ var SECTION_TYPE_ROCK =		 { lightest: "#F2EFEB", lighter: "#BDB5AA", mid: "#9593
 function Level(size) {
 	var level = {
 		"sections": {},
+		"size": size,
 		"currentSection": "0x0",
 		"getSection": function (coordinates) {
 			return this.sections[coordinates];
+		},
+		"edgedWith": function(side) {
+			// 1. get current section
+			var section = level.getSection(level.currentSection);
+			// 2. figure where is it heading to
+
+			// 3. check if section exists
+			var adjacents = this.getSection(this.currentSection).getAdjacentSection(side);
+			// 5. set parameters
+			this.currentSection = adjacents;
 		}
 	};
 
@@ -37,14 +48,37 @@ function Section(type, coordinates) {
 		"type": type,
 		"coordinates": coordinates,
 		"buildings": [],
-		"draw": function ()
-		{
+		"draw": function () {
 			ctx.fillStyle = type.lightest;
 			ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+			ctx.fillStyle = "black";
+			ctx.font="20px Georgia";
+			ctx.fillText(this.coordinates, 30, 30);
 
 			for (var i = this.buildings.length - 1; i >= 0; i--) {
 				this.buildings[i].draw();
 			};
+		},
+		"getAdjacentSection": function (edgeWith) {
+			var coords = coordinates.split("x");
+			var size = level.size.split("x");
+			switch(edgeWith) {
+				case "top":
+					if (coords[0] > 1) { coords[0]--; };
+					break;
+				case "bottom":
+					if (coords[0] < size[0] - 1) { coords[0]++; };
+					break;
+				case "left":
+					if (coords[1] > 1) { coords[1]--; };
+					break;
+				case "right":
+					if (coords[1] < size[1] - 1) { coords[1]++; };
+					break;
+			}
+
+			return coords.join("x");
 		}
 	};
 
@@ -57,20 +91,30 @@ function Section(type, coordinates) {
 /*
 	Function:
 */
-function Building(type, position) {
+function Building(type, position, size) {
 	var building = {
 		"type": type,
 		"wrecked": false,
+<<<<<<< Updated upstream
 		"position": position,
+=======
+>>>>>>> Stashed changes
 		"x": position.x,
 		"y": position.y,
 		"width": 30,
 		"height": 30,
+<<<<<<< Updated upstream
+=======
+		"isDestroyed": false,
+>>>>>>> Stashed changes
 		"powerups": [],
 		"draw": function ()
 		{
 			ctx.fillStyle = type.darker;
-			ctx.fillRect(position.x, position.y, 30, 30);
+			ctx.fillRect(this.x, this.y, this.width, this.height);
+		},
+		"destroy": function () {
+			this.isDestroyed = true;
 		}
 	};
 
@@ -93,8 +137,11 @@ function Powerup(type, position) {
 	return powerup;
 }
 /*
-	Function:
+	Function: randomPosition
+	Return: n/a
+
 */
-function randomPosition () {
+function randomPosition ()
+{
 	return { "x": Math.ceil(Math.random() * CANVAS_WIDTH), "y": Math.ceil(Math.random() * CANVAS_HEIGHT) };
 }

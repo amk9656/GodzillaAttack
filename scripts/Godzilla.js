@@ -18,7 +18,7 @@ function Godzilla()
 	var godzilla = {
 		color: "green",
 		x:230,
-		y:420,
+		y:120,
 		width:75,
 		height: 65,
 		speed: 200,
@@ -39,8 +39,27 @@ function Godzilla()
 }
 
 function godzillaUpdate(deltaTime){		
-	godzilla.x = clamp(godzilla.x, 0, CANVAS_WIDTH - (godzilla.width));
-	godzilla.y = clamp(godzilla.y, 0, CANVAS_HEIGHT - (godzilla.height));
+	var clampX = isClamped(godzilla.x, 0, CANVAS_WIDTH - (godzilla.width)),
+	clampY = isClamped(godzilla.y, 0, CANVAS_HEIGHT - (godzilla.height));
+
+	if (clampX == "max") {
+		godzilla.x = 1;
+		level.edgedWith("right");
+	} else if (clampX == "min") {
+		godzilla.x = CANVAS_WIDTH - godzilla.width - 1;
+		level.edgedWith("left");
+	} else if (clampY == "max") {
+		godzilla.y = 1;
+		level.edgedWith("bottom");
+	} else if (clampY == "min") {
+		godzilla.y = CANVAS_HEIGHT - godzilla.height - 1;
+		level.edgedWith("top");
+	}
+
+	if (clampX || clampY) {
+		console.log(clampX + "/" + clampY);
+	}
+
 
 	if(keydown[KEYBOARD.KEY_LEFT]){			
 		godzilla.x -= godzilla.speed * deltaTime;

@@ -28,6 +28,24 @@ function clamp(val, min, max){
     return Math.max(min, Math.min(max, val));
 }
 
+/* 
+	Function: isClamped
+*/
+function isClamped (val, min, max) {
+	if (val >= max)
+	{
+		return "max";
+	}
+	else if (val <= min)
+	{
+		return "min";
+	}
+	else
+	{
+		return false;
+	}
+}
+
 
 /*
 	Function Name: getRandom(min, max)
