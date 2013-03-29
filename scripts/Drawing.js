@@ -26,13 +26,6 @@ function Animate()
 	
 }
 
-<<<<<<< Updated upstream
-function drawBackground()
-{
-	ctx.fillStyle="gray";
-	ctx.fillRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
-}
-
 function handleCollisions(){
 	helicopter.forEach(function(heli)
 	{
@@ -52,5 +45,3 @@ function handleCollisions(){
 		}
 	});
 }
-=======
->>>>>>> Stashed changes

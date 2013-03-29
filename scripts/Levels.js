@@ -95,18 +95,12 @@ function Building(type, position, size) {
 	var building = {
 		"type": type,
 		"wrecked": false,
-<<<<<<< Updated upstream
 		"position": position,
-=======
->>>>>>> Stashed changes
 		"x": position.x,
 		"y": position.y,
 		"width": 30,
 		"height": 30,
-<<<<<<< Updated upstream
-=======
 		"isDestroyed": false,
->>>>>>> Stashed changes
 		"powerups": [],
 		"draw": function ()
 		{
