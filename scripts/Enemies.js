@@ -6,63 +6,55 @@
 var lastTime = 0;
 var directionTime = 0;
 var randomCounter = 0;
-
-function Helicopter()
-{
-	var helicopter = {
-		
-		color: "red",
-		x:300,
-		y:300,
-		width:40,
-		height:40,
-		speed:50,
-		draw: function()
-		{
-			ctx.fillStyle = this.color;
-			ctx.fillRect(this.x,this.y, this.width, this.height);
-		}
+window.Helicopter = (function(){
+	function Helicopter()
+	{
+		this.active = true;
+		this.color = "red";
+		this.x = 300;
+		this.y = 300;
+		this.width = 40;
+		this.height = 40;
+		this.speed = 50;		
 	};
-	return helicopter;
-}
-
-function drawHelicopter()
-{
-	helicopter.forEach(function(heli)
+	Helicopter.prototype.draw = function(ctx)
 	{
-		heli.draw();
-	});
-}
-
-function enemiesUpdate(deltaTime)
-{
-	helicopter.x = clamp(helicopter.x, 0, CANVAS_WIDTH - (helicopter.width));
-	helicopter.y = clamp(helicopter.y, 0, CANVAS_HEIGHT - (helicopter.height));
-	directionTime += deltaTime;
-	if(directionTime > 3)
+		ctx.fillStyle = this.color;
+		ctx.fillRect(this.x,this.y, this.width, this.height);
+	};		
+	
+	Helicopter.prototype.update = function(deltaTime)
 	{
-		randomCounter = Math.round(Math.random()*5+1);
-		directionTime = 0;
-	}
-	if(randomCounter >= 1 && randomCounter < 2)
+		this.x = clamp(this.x, 0, CANVAS_WIDTH - (this.width));
+		this.y = clamp(this.y, 0, CANVAS_HEIGHT - (this.height));
+		directionTime += deltaTime;
+		if(directionTime > 3)
+		{
+			randomCounter = Math.round(Math.random()*5+1);
+			directionTime = 0;
+		}
+		if(randomCounter >= 1 && randomCounter < 2)
+		{
+			this.x -= this.speed * deltaTime;
+		}
+		if(randomCounter >= 2 && randomCounter < 3)
+		{
+			this.x += this.speed * deltaTime;
+		}
+		if(randomCounter >= 3 && randomCounter < 4)
+		{
+			this.y -= this.speed * deltaTime;
+		}
+		if(randomCounter >= 4)
+		{
+			this.y += this.speed * deltaTime;
+		}
+		handleCollisions();
+		this.active = this.active;
+	};
+	Helicopter.prototype.explode = function()
 	{
-		helicopter.x -= helicopter.speed * deltaTime;
-	}
-	if(randomCounter >= 2 && randomCounter < 3)
-	{
-		helicopter.x += helicopter.speed * deltaTime;
-	}
-	if(randomCounter >= 3 && randomCounter < 4)
-	{
-		helicopter.y -= helicopter.speed * deltaTime;
-	}
-	if(randomCounter >= 4)
-	{
-		helicopter.y += helicopter.speed * deltaTime;
-	}
-	handleCollisions();
-	//console.log(randomCounter);
-	//console.log(directionTime);
-	//console.log(helicopter.x);
-	//console.log(helicopter.y);
-}
+		this.active = false;
+	};
+	return Helicopter;
+})();

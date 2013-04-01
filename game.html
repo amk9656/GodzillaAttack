@@ -12,15 +12,16 @@
 		<script src = "scripts/utils.js"></script>
 		<script>
 		"use strict";
+		
+		window.addEventListener("load",initGame);
+		
 		var CANVAS_WIDTH = 640,
 			CANVAS_HEIGHT = 480;
 
 		var ctx;
 		var godzilla,
 			helicopter = [],
-			level;
-
-		window.addEventListener("load",initGame);		
+			level;				
 
 		function initGame()
 		{
@@ -34,6 +35,16 @@
 			level = new Level("3x3");
 
 			Animate();
+		}
+		function update(deltaTime)
+		{
+			helicopter.forEach(function(heli)
+			{
+				heli.update(deltaTime);
+			});
+			helicopter = helicopter.filter(function(heli){
+			return heli.active;
+			});
 		}
 		</script>
 	</head>

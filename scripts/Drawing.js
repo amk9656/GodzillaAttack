@@ -12,7 +12,7 @@ function Animate()
 {
 	var deltaTime = calculateDeltaTime();	
 
-	enemiesUpdate(deltaTime);
+	update(deltaTime);
 	godzillaUpdate(deltaTime);
 
 	ctx.fillStyle="gray";
@@ -20,10 +20,23 @@ function Animate()
 
 	level.getSection(level.currentSection).draw();
 	drawGodzilla();
-	drawHelicopter();
-	
+	helicopter.forEach(function(heli)
+	{
+		heli.draw(ctx);
+	});
+	drawHealth(ctx);
 	window.requestAnimFrame(Animate);
 	
+}
+
+function drawHealth(ctx)
+{
+	ctx.fillStyle = "#000000";
+	ctx.font = "bold 16px Arial, sans-serif";
+	var healthText = "Health: " + godzilla.health;
+	var textSize = ctx.measureText(healthText);
+	var xCoord = (CANVAS_WIDTH / 2) - (textSize.width / 2);
+	ctx.fillText(healthText, xCoord, 30);
 }
 
 function handleCollisions(){
@@ -33,12 +46,12 @@ function handleCollisions(){
 		{
 			console.log(godzilla.health);
 			godzilla.health -= 5;
-		}
+			heli.explode();	
+		}		
 	});
 	
 	level.getSection(level.currentSection).buildings.forEach(function(building)
-	{
-		
+	{		
 		if(collides(building, godzilla))
 		{
 			console.log("Building destroyed");

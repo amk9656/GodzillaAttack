@@ -74,6 +74,10 @@ function godzillaUpdate(deltaTime){
 		godzilla.y += godzilla.speed * deltaTime;
 	}
 	handleCollisions();
+	if(godzilla.health <= 0)
+	{
+		console.log("You have died");
+	}
 }
 
 function drawGodzilla()
