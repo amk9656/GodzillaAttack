@@ -20,10 +20,16 @@ function Animate()
 
 	level.getSection(level.currentSection).draw();
 	drawGodzilla();
-	helicopter.forEach(function(heli)
+	if(spawnTime > 10)
 	{
-		heli.draw(ctx);
-	});
+		helicopter.push(new Helicopter());
+		spawnTime = 0;		
+	}
+	helicopter.forEach(function(heli)
+		{
+			heli.draw(ctx);
+			
+		});
 	drawHealth(ctx);
 	window.requestAnimFrame(Animate);
 	

@@ -19,6 +19,7 @@
 			CANVAS_HEIGHT = 480;
 
 		var ctx;
+		var spawnTime = 0;
 		var godzilla,
 			helicopter = [],
 			level;				
@@ -38,6 +39,10 @@
 		}
 		function update(deltaTime)
 		{
+			if(helicopter.length < 3)
+			{
+				spawnTime += deltaTime;
+			}
 			helicopter.forEach(function(heli)
 			{
 				heli.update(deltaTime);

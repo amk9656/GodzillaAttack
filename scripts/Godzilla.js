@@ -80,6 +80,8 @@ function godzillaUpdate(deltaTime){
 	}
 }
 
+
+
 function drawGodzilla()
 {
 	godzilla.draw();
