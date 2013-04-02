@@ -25,8 +25,14 @@ function Level(size) {
 
 			// 3. check if section exists
 			var adjacents = this.getSection(this.currentSection).getAdjacentSection(side);
+			if (adjacents != this.currentSection) { edgeGodzilla(side); } else { clampGodzilla(); }
 			// 5. set parameters
 			this.currentSection = adjacents;
+
+			return adjacents;
+		},
+		"drawCurrentSection": function() {
+			this.getSection(this.currentSection).draw();
 		}
 	};
 
@@ -48,13 +54,14 @@ function Section(type, coordinates) {
 		"type": type,
 		"coordinates": coordinates,
 		"buildings": [],
+		"powerups": [],
 		"draw": function () {
 			ctx.fillStyle = type.lightest;
 			ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
-			ctx.fillStyle = "black";
-			ctx.font="20px Georgia";
-			ctx.fillText(this.coordinates, 30, 30);
+			// ctx.fillStyle = "black";
+			// ctx.font="20px Georgia";
+			// ctx.fillText(this.coordinates, 30, 30);
 
 			for (var i = this.buildings.length - 1; i >= 0; i--) {
 				this.buildings[i].draw();
@@ -65,16 +72,16 @@ function Section(type, coordinates) {
 			var size = level.size.split("x");
 			switch(edgeWith) {
 				case "top":
-					if (coords[0] > 1) { coords[0]--; };
+					if (coords[0] >= 1) { coords[0]--; };
 					break;
 				case "bottom":
-					if (coords[0] < size[0] - 1) { coords[0]++; };
+					if (coords[0] <= size[0] - 1) { coords[0]++; };
 					break;
 				case "left":
-					if (coords[1] > 1) { coords[1]--; };
+					if (coords[1] >= 1) { coords[1]--; };
 					break;
 				case "right":
-					if (coords[1] < size[1] - 1) { coords[1]++; };
+					if (coords[1] <= size[1] - 1) { coords[1]++; };
 					break;
 			}
 
@@ -101,16 +108,26 @@ function Building(type, position, size) {
 		"width": 30,
 		"height": 30,
 		"isDestroyed": false,
-		"powerups": [],
+		"powerup": null,
 		"draw": function ()
 		{
-			ctx.fillStyle = type.darker;
-			ctx.fillRect(this.x, this.y, this.width, this.height);
+			if (this.isDestroyed && this.powerup != null) {
+				this.powerup.draw();
+			} else if (this.isDestroyed) {
+				// draw nothing
+			} else {
+				ctx.fillStyle = type.darker;
+				ctx.fillRect(this.x, this.y, this.width, this.height);
+			}
 		},
 		"destroy": function () {
 			this.isDestroyed = true;
 		}
 	};
+
+	if(Math.random() > 0.5) {
+		building.powerup = Powerup("health", building.position);
+	}
 
 	return building;
 }
@@ -120,11 +137,24 @@ function Building(type, position, size) {
 function Powerup(type, position) {
 	var powerup = {
 		"type": type,
-		"used": false,
+		"isConsumed": false,
 		"position": position,
+		"x": position.x,
+		"y": position.y,
+		"width": 10,
+		"height": 10,
 		"draw": function ()
 		{
-
+			if (!isConsumed) {
+				ctx.fillStyle = "#2EBCE9";
+				ctx.beginPath();
+				ctx.arc(this.x - 30, this.y - 35, 10, 0, Math.PI * 2);
+				ctx.closePath();
+				ctx.fill();
+			};
+		},
+		"consume": function() {
+			this.isConsumed = true;
 		}
 	};
 
@@ -132,7 +162,7 @@ function Powerup(type, position) {
 }
 /*
 	Function: randomPosition
-	Return: n/a
+	Return: { "x", "y" }
 
 */
 function randomPosition ()

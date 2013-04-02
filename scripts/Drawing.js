@@ -18,7 +18,7 @@ function Animate()
 	ctx.fillStyle="gray";
 	ctx.fillRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
 
-	level.getSection(level.currentSection).draw();
+	level.drawCurrentSection();
 	drawGodzilla();
 	if(spawnTime > 10)
 	{
@@ -58,9 +58,7 @@ function handleCollisions(){
 	
 	level.getSection(level.currentSection).buildings.forEach(function(building)
 	{		
-		if(collides(building, godzilla))
-		{
-			console.log("Building destroyed");
-		}
+		if (collides(building, godzilla)) { building.destroy(); }
+		if (building.powerup != null && collides(building.powerup, godzilla)) { building.powerup.consumed(); };
 	});
 }

@@ -38,29 +38,8 @@ function Godzilla()
 	return godzilla;
 }
 
-function godzillaUpdate(deltaTime){		
-	var clampX = isClamped(godzilla.x, 0, CANVAS_WIDTH - (godzilla.width)),
-	clampY = isClamped(godzilla.y, 0, CANVAS_HEIGHT - (godzilla.height));
-
-	if (clampX == "max") {
-		godzilla.x = 1;
-		level.edgedWith("right");
-	} else if (clampX == "min") {
-		godzilla.x = CANVAS_WIDTH - godzilla.width - 1;
-		level.edgedWith("left");
-	} else if (clampY == "max") {
-		godzilla.y = 1;
-		level.edgedWith("bottom");
-	} else if (clampY == "min") {
-		godzilla.y = CANVAS_HEIGHT - godzilla.height - 1;
-		level.edgedWith("top");
-	}
-
-	if (clampX || clampY) {
-		console.log(clampX + "/" + clampY);
-	}
-
-
+function godzillaUpdate(deltaTime){
+	// keyboard movement
 	if(keydown[KEYBOARD.KEY_LEFT]){			
 		godzilla.x -= godzilla.speed * deltaTime;
 	}
@@ -73,14 +52,30 @@ function godzillaUpdate(deltaTime){
 	if(keydown[KEYBOARD.KEY_DOWN]){
 		godzilla.y += godzilla.speed * deltaTime;
 	}
+
+	// change of sections	
+	var clampX = isClamped(godzilla.x, 0, CANVAS_WIDTH - (godzilla.width)),
+	clampY = isClamped(godzilla.y, 0, CANVAS_HEIGHT - (godzilla.height));
+
+	if (clampX == "max") {
+		level.edgedWith("right");
+	} else if (clampX == "min") {
+		level.edgedWith("left");
+	} else if (clampY == "max") {
+		level.edgedWith("bottom");
+	} else if (clampY == "min") {
+		level.edgedWith("top");
+	}
+
+	// collision! rawr!
 	handleCollisions();
+
+	// health
 	if(godzilla.health <= 0)
 	{
 		console.log("You have died");
 	}
 }
-
-
 
 function drawGodzilla()
 {
