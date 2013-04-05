@@ -12,29 +12,27 @@ function AnimateGame()
 {
 	var deltaTime = calculateDeltaTime();	
 
-	ctx.fillStyle="gray";
-	ctx.fillRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
-	
-	if(spawnTime > 10)
-	{
-		helicopter.push(new Helicopter());
-		spawnTime = 0;		
-	}
-	helicopter.forEach(function(heli)
-	{
-		heli.draw(ctx);
-	});
+	// ctx.fillStyle="gray";
+	// ctx.fillRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
 	
 	// calling update functions
 	update(deltaTime);
 	godzillaUpdate(deltaTime);
 
 	// calling drawing functions
-	drawHealth(ctx);
-	drawGodzilla();
 	level.drawCurrentSection();
+	godzilla.draw();
+	if(spawnTime > 10)
+	{
+		helicopter.push(new Helicopter());
+		spawnTime = 0;		
+	}
+	helicopter.forEach(function(heli) {
+		heli.draw(ctx);
+	});
+	ui.drawUI();
 
-	window.requestAnimFrame(AnimateGame);
+	threading.push(window.requestAnimFrame(AnimateGame));
 }
 
 /*
@@ -44,23 +42,10 @@ function AnimateGame()
 function AnimateUI () {
 	var deltaTime = calculateDeltaTime();
 
-	ctx.fillStyle="gray";
-	ctx.fillRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
-
 	// ui.updateUI(deltaTime);
 	ui.drawUI();
 
-	window.requestAnimFrame(AnimateUI);
-}
-
-function drawHealth(ctx)
-{
-	ctx.fillStyle = "#000000";
-	ctx.font = "bold 16px Arial, sans-serif";
-	var healthText = "Health: " + godzilla.health;
-	var textSize = ctx.measureText(healthText);
-	var xCoord = (CANVAS_WIDTH / 2) - (textSize.width / 2);
-	ctx.fillText(healthText, xCoord, 30);
+	threading.push(window.requestAnimFrame(AnimateUI));
 }
 
 function handleCollisions(){

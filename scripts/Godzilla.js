@@ -76,8 +76,3 @@ function godzillaUpdate(deltaTime){
 		console.log("You have died");
 	}
 }
-
-function drawGodzilla()
-{
-	godzilla.draw();
-}
