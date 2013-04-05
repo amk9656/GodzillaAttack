@@ -6,6 +6,7 @@
         <link rel="stylesheet" href="styles/normalize.css">
         <link rel="stylesheet" href="styles/style.css">
 		<script src = "scripts/Godzilla.js"></script>
+		<script src = "scripts/Bullet.js"></script>
 		<script src = "scripts/Drawing.js"></script>
 		<script src = "scripts/Levels.js"></script>
 		<script src = "scripts/Enemies.js"></script>
@@ -20,9 +21,12 @@
 
 		var ctx;
 		var spawnTime = 0;
+		var shootTime = 0;
 		var godzilla,
 			helicopter = [],
-			level;				
+			heliBullets = [],
+			level;		
+		
 
 		function initGame()
 		{
@@ -37,12 +41,19 @@
 
 			Animate();
 		}
+		function shoot(x, y)
+		{			
+			heliBullets.push(new Bullet(x,y,2))
+		}
+		
 		function update(deltaTime)
 		{
+			//console.log(shootTime);			
 			if(helicopter.length < 3)
 			{
 				spawnTime += deltaTime;
 			}
+			godzilla.update(deltaTime);
 			helicopter.forEach(function(heli)
 			{
 				heli.update(deltaTime);
@@ -50,6 +61,25 @@
 			helicopter = helicopter.filter(function(heli){
 			return heli.active;
 			});
+			
+			helicopter.forEach(function(heli)
+			{
+				shootTime += deltaTime;
+				if(shootTime >= 4)
+				{
+					console.log(heliBullets);
+					shoot(heli.x,heli.y);
+					shootTime = 0;
+				}
+			});
+			
+			heliBullets.forEach(function(bullet){
+				bullet.update(deltaTime);
+			});
+			
+			heliBullets = heliBullets.filter(function(bullet){
+				return bullet.active;
+				});
 		}
 		</script>
 	</head>

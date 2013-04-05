@@ -11,24 +11,24 @@
 function Animate()
 {
 	var deltaTime = calculateDeltaTime();	
-
 	update(deltaTime);
-	godzillaUpdate(deltaTime);
-
+	
 	ctx.fillStyle="gray";
 	ctx.fillRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
-
 	level.getSection(level.currentSection).draw();
-	drawGodzilla();
 	if(spawnTime > 10)
 	{
 		helicopter.push(new Helicopter());
 		spawnTime = 0;		
 	}
+	godzilla.draw(ctx);
 	helicopter.forEach(function(heli)
 		{
 			heli.draw(ctx);
 			
+		});
+	heliBullets.forEach(function(bullet){
+			bullet.draw(ctx);
 		});
 	drawHealth(ctx);
 	window.requestAnimFrame(Animate);
@@ -45,6 +45,8 @@ function drawHealth(ctx)
 	ctx.fillText(healthText, xCoord, 30);
 }
 
+
+
 function handleCollisions(){
 	helicopter.forEach(function(heli)
 	{
@@ -55,7 +57,17 @@ function handleCollisions(){
 			heli.explode();	
 		}		
 	});
-	
+	helicopter.forEach(function(heli)
+	{
+		heliBullets.forEach(function(bullet)
+		{
+			if(collides(bullet, godzilla))
+			{
+				godzilla.health -=5;
+				bullet.active = false;
+			}
+		});
+	});
 	level.getSection(level.currentSection).buildings.forEach(function(building)
 	{		
 		if(collides(building, godzilla))

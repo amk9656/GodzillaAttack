@@ -1,6 +1,5 @@
-//Godzilla's controls go here
 "use strict";
-//CONSTANTS
+
 var KEYBOARD = {
 	"KEY_LEFT":37,
 	"KEY_UP":38,
@@ -9,80 +8,83 @@ var KEYBOARD = {
 	"KEY_SPACE": 32
 };
 
-//GLOBALS
 var lastTime = 0;
 var keydown = [];
 
-function Godzilla()
-{
-	var godzilla = {
-		color: "green",
-		x:230,
-		y:120,
-		width:75,
-		height: 65,
-		speed: 200,
-		health:100,
-		draw: function ()
-		{
-			ctx.fillStyle = this.color;
-			ctx.fillRect(this.x,this.y, this.width, this.height);
-		}
+window.Godzilla = (function(){
+	function Godzilla()
+	{
+		this.color = "green";
+		this.x = 230;
+		this.y = 120;
+		this.width = 75;
+		this.height = 65;
+		this.attackWidth = 95;
+		this.attackHeight = 30;
+		this.speed = 200;
+		this.health = 100;
 	};
+	
 	window.addEventListener("keydown",function(e){
 		keydown[e.keyCode] = true;
 	});
 	window.addEventListener("keyup",function(e){
 		keydown[e.keyCode] = false;
 	});		
-	return godzilla;
-}
-
-function godzillaUpdate(deltaTime){		
-	var clampX = isClamped(godzilla.x, 0, CANVAS_WIDTH - (godzilla.width)),
-	clampY = isClamped(godzilla.y, 0, CANVAS_HEIGHT - (godzilla.height));
-
-	if (clampX == "max") {
-		godzilla.x = 1;
-		level.edgedWith("right");
-	} else if (clampX == "min") {
-		godzilla.x = CANVAS_WIDTH - godzilla.width - 1;
-		level.edgedWith("left");
-	} else if (clampY == "max") {
-		godzilla.y = 1;
-		level.edgedWith("bottom");
-	} else if (clampY == "min") {
-		godzilla.y = CANVAS_HEIGHT - godzilla.height - 1;
-		level.edgedWith("top");
-	}
-
-	if (clampX || clampY) {
-		console.log(clampX + "/" + clampY);
-	}
-
-
-	if(keydown[KEYBOARD.KEY_LEFT]){			
-		godzilla.x -= godzilla.speed * deltaTime;
-	}
-	if(keydown[KEYBOARD.KEY_RIGHT]){
-		godzilla.x += godzilla.speed * deltaTime;
-	}
-	if(keydown[KEYBOARD.KEY_UP]){
-		godzilla.y -= godzilla.speed * deltaTime;
-	}
-	if(keydown[KEYBOARD.KEY_DOWN]){
-		godzilla.y += godzilla.speed * deltaTime;
-	}
-	handleCollisions();
-	if(godzilla.health <= 0)
+	Godzilla.prototype.draw = function(ctx)
 	{
-		console.log("You have died");
-	}
-}
+		ctx.fillStyle = this.color;
+		ctx.fillRect(this.x,this.y, this.width, this.height);
+	};
+	
+	Godzilla.prototype.update = function(deltaTime)
+	{
+		var clampX = isClamped(this.x, 0, CANVAS_WIDTH - (this.width)),
+		clampY = isClamped(this.y, 0, CANVAS_HEIGHT - (this.height));
+
+		if (clampX == "max") {
+			this.x = 1;
+			level.edgedWith("right");
+		} else if (clampX == "min") {
+			this.x = CANVAS_WIDTH - this.width - 1;
+			level.edgedWith("left");
+		} else if (clampY == "max") {
+			this.y = 1;
+			level.edgedWith("bottom");
+		} else if (clampY == "min") {
+			this.y = CANVAS_HEIGHT - this.height - 1;
+			level.edgedWith("top");
+		}
+
+		if (clampX || clampY) {
+			console.log(clampX + "/" + clampY);
+		}
 
 
+		if(keydown[KEYBOARD.KEY_LEFT]){			
+			this.x -= this.speed * deltaTime;
+		}
+		if(keydown[KEYBOARD.KEY_RIGHT]){
+			this.x += this.speed * deltaTime;
+		}
+		if(keydown[KEYBOARD.KEY_UP]){
+			this.y -= this.speed * deltaTime;
+		}
+		if(keydown[KEYBOARD.KEY_DOWN]){
+			this.y += this.speed * deltaTime;
+		}
+		if(keydown[KEYBOARD.KEY_SPACE])
+		{
+			ctx.fillStyle = this.color;
+			ctx.fillRect(this.x - 10, this.y - (this.height/3),this.attackWidth, this.attackHeight);
+			console.log(hello);
+		}
+		handleCollisions();
+		if(this.health <= 0)
+		{
+			console.log("You have died");
+		}
 
-function drawGodzilla()
-{
-	godzilla.draw();
-}
+	};
+	return Godzilla;
+})();
