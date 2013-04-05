@@ -5,11 +5,12 @@
 		<title>Godzilla Attack</title>
         <link rel="stylesheet" href="styles/normalize.css">
         <link rel="stylesheet" href="styles/style.css">
-		<script src = "scripts/Godzilla.js"></script>
-		<script src = "scripts/Drawing.js"></script>
-		<script src = "scripts/Levels.js"></script>
-		<script src = "scripts/Enemies.js"></script>
-		<script src = "scripts/utils.js"></script>
+		<script src="scripts/Godzilla.js" type="text/javascript"></script>
+		<script src="scripts/Drawing.js" type="text/javascript"></script>
+		<script src="scripts/Levels.js" type="text/javascript"></script>
+		<script src="scripts/Enemies.js" type="text/javascript"></script>
+		<script src="scripts/Screen.js" type="text/javascript"></script>
+		<script src="scripts/utils.js" type="text/javascript"></script>
 		<script>
 		"use strict";
 		
@@ -22,20 +23,26 @@
 		var spawnTime = 0;
 		var godzilla,
 			helicopter = [],
-			level;				
+			level,
+			Screen;				
 
 		function initGame()
 		{
-			
 			var canvasElement = document.querySelector("#canvas");
 			canvasElement.width = CANVAS_WIDTH;
 			canvasElement.height = CANVAS_HEIGHT;
 			ctx = canvasElement.getContext("2d");
-			godzilla = new Godzilla();
-			helicopter.push(new Helicopter());
-			level = new Level("3x3");
+			Screen = new Screen();
 
-			Animate();
+
+			AnimateScreen();
+			if (level != null) {
+				godzilla = new Godzilla();
+				helicopter.push(new Helicopter());
+				level = new Level("3x3");
+
+				AnimateGame();
+			}
 		}
 		function update(deltaTime)
 		{
@@ -43,12 +50,11 @@
 			{
 				spawnTime += deltaTime;
 			}
-			helicopter.forEach(function(heli)
-			{
+			helicopter.forEach(function(heli) {
 				heli.update(deltaTime);
 			});
-			helicopter = helicopter.filter(function(heli){
-			return heli.active;
+			helicopter = helicopter.filter(function(heli) {
+				return heli.active;
 			});
 		}
 		</script>

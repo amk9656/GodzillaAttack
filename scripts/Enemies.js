@@ -86,7 +86,7 @@ window.Helicopter = (function(){
 			break;
 			}
 		clampHeli();
-		}
+	}
 	
 	Helicopter.prototype.explode = function()
 	{

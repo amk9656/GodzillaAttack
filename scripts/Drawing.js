@@ -5,11 +5,18 @@
 //GLOBALS
 
 /*
-	Function: Animate()
-	Desc: redraw screen at 60 fps
+	Function: AnimateGame()
+	Desc: redraw game screen at 60 fps
 */
-function Animate()
+function AnimateGame()
 {
+	// title screen
+	if (level != null) {
+		Screen.drawScreen("startGame");
+	} else {
+
+	}
+
 	var deltaTime = calculateDeltaTime();	
 
 	update(deltaTime);
@@ -17,9 +24,7 @@ function Animate()
 
 	ctx.fillStyle="gray";
 	ctx.fillRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
-
-	level.drawCurrentSection();
-	drawGodzilla();
+	
 	if(spawnTime > 10)
 	{
 		helicopter.push(new Helicopter());
@@ -28,11 +33,32 @@ function Animate()
 	helicopter.forEach(function(heli)
 		{
 			heli.draw(ctx);
-			
 		});
-	drawHealth(ctx);
-	window.requestAnimFrame(Animate);
 	
+
+	// calling drawing functions
+	drawHealth(ctx);
+	Screen.drawScreen();
+	drawGodzilla();
+	level.drawCurrentSection();
+
+	window.requestAnimFrame(AnimateGame);
+}
+
+/*
+ * Function: AnimateScreen()
+ * 
+ */
+function AnimateScreen () {
+	var deltaTime = calculateDeltaTime();
+
+	ctx.fillStyle="gray";
+	ctx.fillRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
+
+	Screen.updateScreen(deltaTime);
+	Screen.drawScreen();
+
+	window.requestAnimFrame(AnimateScreen);
 }
 
 function drawHealth(ctx)
@@ -56,9 +82,9 @@ function handleCollisions(){
 		}		
 	});
 	
-	level.getSection(level.currentSection).buildings.forEach(function(building)
+	level.getSection(level.currentSection).bScreenldings.forEach(function(bScreenlding)
 	{		
-		if (collides(building, godzilla)) { building.destroy(); }
-		if (building.powerup != null && collides(building.powerup, godzilla)) { building.powerup.consumed(); };
+		if (collides(bScreenlding, godzilla)) { bScreenlding.destroy(); }
+		if (bScreenlding.powerup != null && collides(bScreenlding.powerup, godzilla)) { bScreenlding.powerup.consumed(); };
 	});
 }
