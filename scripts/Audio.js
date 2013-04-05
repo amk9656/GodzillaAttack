@@ -6,20 +6,24 @@
 // CONSTANTS
 
 window.AudioEffect = (function() {
-	function AudioEffect (sourceFile) {
+	//
+	//	Constructor Function
+	//		AudioEffect(sourceFile:string, isLoop:boolean, isTriggered:boolean, killOnPlayed:boolean)
+	//		Return a AudioEffect object
+	//		sourceFile is strictly limited to sounds directory
+	//
+	function AudioEffect (sourceFile, isLoop, isTriggered, killOnPlayed) {
 		this.channel = new Audio();
-		this.sourceFile = "/sounds/" + sourceFile;
-		this.isLoop = arguments[1] || false;
-		this.isTriggered = arguments[2] || true;
-		this.killOnPlayed = arguments[3] || true;
+		this.sourceFile = "sounds/" + sourceFile;
+		this.isLoop = isLoop;
+		this.isTriggered = isTriggered;
+		this.killOnPlayed = killOnPlayed;
 
 		var sourceFileURL = this.sourceFile;
 		if (this.channel.canPlayType("audio/mpeg")) {
-			sourceFileURL += ".MP3";
-		} else if (this.channel.canPlayType("audio/ogg")) {
-			sourceFileURL += ".OGG";
+			sourceFileURL += ".mp3";
 		} else {
-			sourceFileURL += ".WAV";
+			sourceFileURL += ".wav";
 		}
 
 		this.channel.src = sourceFileURL;
@@ -30,6 +34,10 @@ window.AudioEffect = (function() {
 			this.channel.addEventListener("played", function(evt) {
 				console.log(evt);
 			});
+		};
+
+		if (this.isTriggered) {
+			this.channel.play();
 		};
 	}
 
