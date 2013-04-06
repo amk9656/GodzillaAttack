@@ -10,6 +10,7 @@
 		<script src="scripts/Levels.js" type="text/javascript"></script>
 		<script src="scripts/Enemies.js" type="text/javascript"></script>
 		<script src="scripts/UI.js" type="text/javascript"></script>
+		<script src="scripts/Audio.js" type="text/javascript"></script>
 		<script src="scripts/utils.js" type="text/javascript"></script>
 		<script>
 		"use strict";
@@ -24,6 +25,7 @@
 		var godzilla,
 			helicopter = [],
 			level,
+			audioChannels = [],				
 			ui;				
 
 		function init () {
@@ -31,6 +33,7 @@
 			canvasElement.width = CANVAS_WIDTH;
 			canvasElement.height = CANVAS_HEIGHT;
 			ctx = canvasElement.getContext("2d");
+			audioChannels.push(new AudioEffect("bgm", true, true, false));
 			ui = new UI();
 
 			AnimateUI();
@@ -40,6 +43,7 @@
 			godzilla = new Godzilla();
 			helicopter.push(new Helicopter());
 			level = new Level("3x3");
+			audioChannels.push(new AudioEffect("bgm", true, true, false));
 
 			AnimateGame();
 		}
