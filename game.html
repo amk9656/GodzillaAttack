@@ -15,20 +15,24 @@
 		<script>
 		"use strict";
 		
-		window.addEventListener("load",init);
+		// what we want to use for real=================
+		// window.addEventListener("load", loadImages);
+		window.addEventListener("load", init);
 		
 		var CANVAS_WIDTH = 640,
 			CANVAS_HEIGHT = 480;
 
-		var ctx, threading = [];
-		var spawnTime = 0;
+		var ctx, lastTime;
 		var godzilla,
-			helicopter = [],
+			helicopters = [],
+			heliBullets = [],
 			level,
-			audioChannels = [],				
-			ui;				
+			audioChannels = [],
+			ui;		
+		
 
-		function init () {
+		function init()
+		{
 			var canvasElement = document.querySelector("#canvas");
 			canvasElement.width = CANVAS_WIDTH;
 			canvasElement.height = CANVAS_HEIGHT;
@@ -41,25 +45,11 @@
 
 		function initGame () {
 			godzilla = new Godzilla();
-			helicopter.push(new Helicopter());
+			helicopters.push(new Helicopter());
 			level = new Level("3x3");
 			audioChannels.push(new AudioEffect("bgm", true, true, false));
 
 			AnimateGame();
-		}
-
-		function update(deltaTime)
-		{
-			if(helicopter.length < 3)
-			{
-				spawnTime += deltaTime;
-			}
-			helicopter.forEach(function(heli) {
-				heli.update(deltaTime);
-			});
-			helicopter = helicopter.filter(function(heli) {
-				return heli.active;
-			});
 		}
 		</script>
 	</head>
