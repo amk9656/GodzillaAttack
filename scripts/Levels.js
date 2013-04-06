@@ -106,6 +106,7 @@ function Building(type, position, size) {
 		{
 			ctx.fillStyle = type.darker;
 			ctx.fillRect(this.x, this.y, this.width, this.height);
+			//ctx.drawImage(images["imagenamehere"], source coordinate x, source coordinate y, source width, sourch height, this.x, this.y, this.width, this.height);
 		},
 		"destroy": function () {
 			this.isDestroyed = true;

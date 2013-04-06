@@ -35,6 +35,7 @@ window.Godzilla = (function(){
 	{
 		ctx.fillStyle = this.color;
 		ctx.fillRect(this.x,this.y, this.width, this.height);
+		//ctx.drawImage(images["imagenamehere"], source coordinate x, source coordinate y, source width, sourch height, this.x, this.y, this.width, this.height);
 	};
 	
 	Godzilla.prototype.update = function(deltaTime)
