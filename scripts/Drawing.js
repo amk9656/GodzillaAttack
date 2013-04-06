@@ -2,7 +2,7 @@
 "use strict";
 //CONSTANTS
 var IMAGE_SOURCES = {
-	playerImage: "",
+	playerImage: "godzilla.png",
 	enemyImage: "",
 	buildingImage: ""
 };
@@ -102,7 +102,7 @@ function loadImages(){
 		for(var imageName in IMAGE_SOURCES){
 			console.log("Sarted loading " + imageName);
 			images[imageName] = new Image(); 
-			images[imageName].src = IMAGE_SOURCES[imageName];
+			images[imageName].src = "images/" + IMAGE_SOURCES[imageName];
 			
 			images[imageName].onload = function(){
 			console.log(this.src + " load complete");
