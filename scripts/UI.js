@@ -1,17 +1,18 @@
 "use strict";
 window.UI = (function() {
 	function UI() {
-		this.UIState = "startGame";
-		this.clickableShapes = [];
-		this.animatableShapes = [];
+		this.UIState = "";
+		this.drawableElements = [];
+		this.clickableElements = [];
+		this.animatableElements = [];
 
 		var canvas = document.querySelector("canvas");
 		canvas.addEventListener("mousemove", function(evt) {
 			var mouse = { x: evt.offsetX, y: evt.offsetY, width: 1, height: 1 };
 			document.body.style.cursor = "default";
 			// mousemove events
-			ui.clickableShapes.forEach(function(shape) {
-				if (collides(mouse, shape)) {
+			ui.clickableElements.forEach(function(element) {
+				if (collides(mouse, element)) {
 					//	cursor
 					document.body.style.cursor = "pointer";
 				}
@@ -21,100 +22,132 @@ window.UI = (function() {
 			var mouse = { x: evt.offsetX, y: evt.offsetY, width: 1, height: 1 };
 
 			// mouseup events
-			ui.clickableShapes.forEach(function(shape) {
-				if (collides(mouse, shape)) {
-					shape.callback();
+			ui.clickableElements.forEach(function(element) {
+				if (collides(mouse, element)) {
+					element.callback();
 				};
 			});
 		});
 	}
 
 	UI.prototype.drawUI = function() {
-		switch(this.UIState) {
-			case "startGame":
-				createStartGameUI();
-				break;
-			case "game":
-				createGameUI();
-				break;
-			case "endGame":
-				createEndGameUI();
-				break;
-			case "credit":
-				createCreditUI();
-				break;
-		}
+		if (this.drawableElements.length != 0) {
+			this.drawableElements.forEach(function(element) {
+				element.draw();
+			});
+		};
 	};
 
 	UI.prototype.switchUI = function(switchTo) {
 		if (this.UIState != switchTo) {
 			this.UIState = switchTo;
+			this.drawableElements = [];
+			this.clickableElements = [];
+			this.animatableElements = [];
+
+			switch(this.UIState) {
+				case "startGame":
+					createStartGameUI();
+					break;
+				case "game":
+					createGameUI();
+					break;
+				case "endGame":
+					createEndGameUI();
+					break;
+				case "credit":
+					createCreditUI();
+					break;
+			}
 		}
 	};
 
 	UI.prototype.updateUI = function(dt) {
-
+		if (this.animatableElements.length != 0) {
+			this.animatableElements.forEach(function(element) {
+				element.animate();
+			});
+		};
 	};
 
 	function createStartGameUI() {
 		var gradient, startGameBtn, creditBtn;
 
-		ctx.fillStyle="gray";
-		ctx.fillRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
-
-		startGameBtn = { type: "button", text: "start", x: 170, y: 300, width: 300, height:50, callback: function() {
-			ui.switchUI("game");
-			if (level == null) { initGame(); };
-		} };
-		ui.clickableShapes.push(startGameBtn);
-		creditBtn = { type: "button", text: "credit", x: 170, y: 380, width: 300, height:50, callback: function() { ui.switchUI("credit"); } };
-		ui.clickableShapes.push(creditBtn);
-
-		gradient = ctx.createLinearGradient(0, 0, 50, 50);
-		gradient.addColorStop(0, "rgb(201,222,150)");
+		gradient = ctx.createLinearGradient(0, 0, 0, 50);
+		gradient.addColorStop(0, "rgb(201,22,150)");
 		gradient.addColorStop("0.44", "rgb(138,182,107)");
 		gradient.addColorStop(1, "rgb(57,130,53)");
 
-		ctx.font = "30px Georgia";
-		ctx.strokeStyle = "black";
-		ctx.lineWidth = "2px";
-		ctx.shadowColor = "#666";
-		ctx.shadowBlur = 10;
-		ctx.shadowOffsetX = 0;
-		ctx.shadowOffsetY = 1;
+		startGameBtn = new UIElement({ type: "button", text: "start", x: 170, y: 300, width: 300, height:50, callback: function() {
+					ui.switchUI("game");
+					if (level == null) { initGame(); };
+				}, draw: function() {
+					var grad = gradient;
+		
+					ctx.font = "30px Georgia";
+					ctx.strokeStyle = "black";
+					ctx.lineWidth = "2px";
+					ctx.shadowColor = "#666";
+					ctx.shadowBlur = 10;
+					ctx.shadowOffsetY = 1;
+		
+					ctx.fillStyle = grad;
+					ctx.fillRect(this.x, this.y, this.width, this.height);
+					ctx.strokeRect(this.x, this.y, this.width, this.height);
+		
+					ctx.fillStyle = "black";
+					ctx.shadowColor = "transparent";
+					ctx.shadowBlur = 0;
+					ctx.shadowOffsetY = 0;
+					ctx.fillText(this.text, this.x + 120, this.y + 35);
+				}, animate: function(dt) {
+		
+				} });
 
-		// start game btn
-		ctx.fillStyle = gradient;
-		ctx.fillRect(startGameBtn.x, startGameBtn.y, startGameBtn.width, startGameBtn.height);
-		ctx.strokeRect(startGameBtn.x, startGameBtn.y, startGameBtn.width, startGameBtn.height);
+		creditBtn = new UIElement({ type: "button", text: "credit", x: 170, y: 380, width: 300, height:50, callback: function() { ui.switchUI("credit"); 
+				}, draw: function() {
+					var grad = gradient;
+		
+					ctx.font = "30px Georgia";
+					ctx.strokeStyle = "black";
+					ctx.lineWidth = "2px";
+					ctx.shadowColor = "#666";
+					ctx.shadowBlur = 10;
+					ctx.shadowOffsetY = 1;	
+		
+					ctx.fillStyle = grad;
+					ctx.fillRect(this.x, this.y, this.width, this.height);
+					ctx.strokeRect(this.x, this.y, this.width, this.height);
+		
+					ctx.fillStyle = "black";
+					ctx.shadowColor = "transparent";
+					ctx.shadowBlur = 0;
+					ctx.shadowOffsetY = 0;
+					ctx.fillText(this.text, this.x + 110, this.y + 35);
+				}, animate: function(dt) {
+		
+				} });
 
-		// credit btn
-		ctx.fillRect(creditBtn.x, creditBtn.y, creditBtn.width, creditBtn.height);
-		ctx.strokeRect(creditBtn.x, creditBtn.y, creditBtn.width, creditBtn.height);
-
-		// start
-		ctx.fillStyle = "black";
-		ctx.shadowColor = "transparent";
-		ctx.shadowBlur = 0;
-		ctx.shadowOffsetX = 0;
-		ctx.shadowOffsetY = 0;
-		ctx.fillText(startGameBtn.text, startGameBtn.x + 120, startGameBtn.y + 35);
-
-		// credit
-		ctx.fillText(creditBtn.text, creditBtn.x + 110, creditBtn.y + 35);
+		ui.drawableElements.push(startGameBtn, creditBtn);
+		ui.clickableElements.push(startGameBtn, creditBtn);
+		ui.animatableElements.push(startGameBtn, creditBtn);
 	};
 
 	function createGameUI() {
 		var healthGradient, healthBar;
 
-		healthBar = { type: "shape", x: 0, y: 0, width: CANVAS_WIDTH, height: 15 };
+		healthBar = new UIElement({ type: "shape", x: 0, y: 0, width: CANVAS_WIDTH, height: 15, draw: function() {
+				ctx.fillStyle = healthGradient;
+				ctx.strokeStyle = "black";
+				ctx.lineWidth = "2px";
 
-		ctx.fillStyle = healthGradient;
-		ctx.strokeStyle = "black";
-		ctx.lineWidth = "2px";
+				ctx.fillRect(healthBar.x, healthBar.y, healthBar.width * (godzilla.health / 100), healthBar.height);
+				ctx.strokeRect(healthBar.x, healthBar.y, healthBar.width, healthBar.height);
+			}, animate: function(dt) {
 
-		ctx.fillRect(healthBar.x, healthBar.y, healthBar.width * (godzilla.health / 100), healthBar.height);
-		ctx.strokeRect(healthBar.x, healthBar.y, healthBar.width, healthBar.height);
+			} });
+
+		ui.drawableElements.push(healthBar);
 	};
 
 	function createCreditUI() {
@@ -122,8 +155,44 @@ window.UI = (function() {
 	};
 
 	function createEndGameUI() {
+		var restartBtn;
 
+		restartBtn = new UIElement({ type: "button", text: "restart", x: 170, y: 380, width: 300, height:50, 
+			callback: function() { 
+				ui.switchUI("game"); 
+			}, draw: function() {
+				var grad = gradient;
+	
+				ctx.font = "30px Georgia";
+				ctx.strokeStyle = "black";
+				ctx.lineWidth = "2px";
+				ctx.shadowColor = "#666";
+				ctx.shadowBlur = 10;
+				ctx.shadowOffsetY = 1;	
+	
+				ctx.fillStyle = grad;
+				ctx.fillRect(this.x, this.y, this.width, this.height);
+				ctx.strokeRect(this.x, this.y, this.width, this.height);
+	
+				ctx.fillStyle = "black";
+				ctx.shadowColor = "transparent";
+				ctx.shadowBlur = 0;
+				ctx.shadowOffsetY = 0;
+				ctx.fillText(this.text, this.x + 110, this.y + 35);
+			}, animate: function(dt) {
+	
+			}
+		});
 	};
 
 	return UI;
+})();
+
+window.UIElement = (function() {
+	function UIElement (parameters) {
+		for (var key in parameters) {
+			this[key] = parameters[key];
+		};
+	}
+	return UIElement;
 })();
