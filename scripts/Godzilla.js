@@ -24,6 +24,7 @@ window.Godzilla = (function(){
 		this.spriteY = 0;
 		this.speed = 200;
 		this.health = 100;
+		this.score = 0;
 		this.isDead = false;
 
 		this.attackWidth = 95;

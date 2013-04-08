@@ -149,7 +149,7 @@ window.UI = (function() {
 	};
 
 	function createGameUI() {
-		var healthBar;
+		var healthBar, scoreBar;
 
 		healthBar = new UIElement({ type: "shape", x: 0, y: 0, width: CANVAS_WIDTH, height: 15, draw: function() {
 			var healthGradient = ctx.createLinearGradient(0, 0, CANVAS_WIDTH, 0);
@@ -166,7 +166,23 @@ window.UI = (function() {
 
 		} });
 
-		ui.drawableElements.push(healthBar);
+		scoreBar = new UIElement({ type: "shape", x: 10, y: 30, height: 18, draw: function() {
+			
+			ctx.font = "18px Geo";
+
+			var textWidth = ctx.measureText("score/ " + godzilla.score);
+
+			ctx.fillStyle = "rgba(255,255,255,0.6)";
+			ctx.fillRect(this.x, this.y, textWidth.width, this.height);
+
+			ctx.fillStyle = "black";
+			ctx.save();
+			ctx.textBaseline = "top";
+			ctx.fillText("score/ " + godzilla.score, this.x, this.y);
+			ctx.restore();
+		} });
+
+		ui.drawableElements.push(healthBar, scoreBar);
 	};
 
 	function createCreditUI() {
@@ -223,7 +239,19 @@ window.UI = (function() {
 	};
 
 	function createEndGameUI() {
-		var restartBtn;
+		var restartBtn, youDied;
+
+		youDied = new UIElement({ type: "text", text: "You Died! D:", x: 0, y: 160, draw: function() {
+			ctx.font = "30px Geo";
+			ctx.fillStyle = "black";
+			ctx.shadowColor = "#666";
+			ctx.shadowBlur = 10;
+			ctx.shadowOffsetY = 1;
+
+			this.x = (CANVAS_WIDTH - ctx.measureText(this.text).width) / 2;
+
+			ctx.fillText(this.text, this.x, this.y);
+		} });
 
 		restartBtn = new UIElement({ type: "button", text: "restart", x: 170, y: 380, width: 300, height:50, 
 			callback: function() { 
@@ -253,13 +281,14 @@ window.UI = (function() {
 				ctx.shadowColor = "transparent";
 				ctx.shadowBlur = 0;
 				ctx.shadowOffsetY = 0;
-				ctx.fillText(this.text, this.x + 110, this.y + 35);
+				var textWidth = ctx.measureText(this.text).width;
+				ctx.fillText(this.text, this.x + (this.width - textWidth) / 2, this.y + 35);
 			}, animate: function(dt) {
 	
 			}
 		});
 
-		ui.drawableElements.push(restartBtn);
+		ui.drawableElements.push(restartBtn, youDied);
 		ui.clickableElements.push(restartBtn);
 	};
 

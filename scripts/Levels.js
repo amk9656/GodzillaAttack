@@ -43,6 +43,13 @@ window.Level = (function () {
 		this.getSection(this.currentSection).draw();
 	};
 
+	Level.prototype.isAllCleared = function() {
+		for (var section in this.sections) {
+			if (!this.sections[section].isCleared) { return false; };
+		};
+		return true;
+	};
+
 	return Level;
 })();
 /*
@@ -51,14 +58,13 @@ window.Level = (function () {
 window.Section = (function () {
 	function Section (coordinates) {
 		this.coordinates = coordinates;
+		this.isCleared = false;
 		this.buildings = [];
 		this.powerups = [];
 
-		for (var i = Math.ceil(Math.random() * 50) - 1; i >= 0; i--) {
+		for (var i = Math.ceil(getRandom(10, 25)) - 1; i >= 0; i--) {
 			this.buildings.push(new Building(randomPosition()));
 		};
-
-		return this;
 	}
 
 	Section.prototype.draw = function() {
@@ -72,6 +78,10 @@ window.Section = (function () {
 
 		for (var i = this.buildings.length - 1; i >= 0; i--) {
 			this.buildings[i].draw();
+		};
+
+		for (var j = this.powerups.length - 1; j >= 0; j--) {
+			this.powerups[j].draw();
 		};
 	};
 
@@ -95,6 +105,26 @@ window.Section = (function () {
 
 		return coords.join("x");
 	};
+
+	Section.prototype.destroyBuilding = function(building) {
+		var indexAt = this.buildings.indexOf(building);
+		if (indexAt >= -1) {
+			this.buildings[indexAt].destroy();
+			this.isCleared = this.buildings.every(function(building) {
+				return building.isDestroyed;
+			});
+			if (this.isCleared) { level.isAllCleared(); };
+		};
+	};
+
+	/*
+	Function: randomPosition
+	Return: { "x", "y" }
+
+	*/
+	function randomPosition () {
+		return { "x": getRandom(50, CANVAS_WIDTH - 50), "y": getRandom(50, CANVAS_HEIGHT - 50) };
+	}
 
 	return Section;
 })();
@@ -121,11 +151,7 @@ window.Building = (function() {
 	}
 
 	Building.prototype.draw = function () {
-		if (this.isDestroyed && this.powerup != null) {
-			this.powerup.draw();
-		} else if (this.isDestroyed) {
-				// draw nothing
-		} else {
+		if (!this.isDestroyed) {
 			if (!images["buildingsImage"]) {
 				ctx.fillStyle = "#8D8A83";
 				ctx.fillRect(this.x, this.y, this.width, this.height);
@@ -142,7 +168,13 @@ window.Building = (function() {
 	};
 
 	Building.prototype.destroy = function () {
-		this.isDestroyed = true;
+		if (!this.isDestroyed) {
+			this.isDestroyed = true;
+			godzilla.score += 5;
+			if (this.powerup) {
+				level.getSection(level.currentSection).powerups.push(this.powerup);
+			};
+		}
 	};
 
 	return Building;
@@ -172,7 +204,7 @@ window.Powerup = (function() {
 				this.color = "#67FF53";
 				break;
 			case 2:
-				this.effect = function() { godzilla.health += 25 };
+				this.effect = function() { godzilla.score += 25 };
 				this.color = "#FFA349";
 				break;
 		}
@@ -205,12 +237,3 @@ window.Powerup = (function() {
 
 	return Powerup;
 })();
-/*
-	Function: randomPosition
-	Return: { "x", "y" }
-
-*/
-function randomPosition ()
-{
-	return { "x": Math.ceil(Math.random() * CANVAS_WIDTH), "y": Math.ceil(Math.random() * CANVAS_HEIGHT) };
-}

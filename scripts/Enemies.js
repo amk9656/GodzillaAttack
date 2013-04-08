@@ -99,7 +99,7 @@ window.Helicopter = (function(){
 	Helicopter.prototype.explode = function() {
 		if (this.active) {
 			this.active = false;
-			godzilla.health -=5;
+			godzilla.health -= 15;
 		};
 	};
 

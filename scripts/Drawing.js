@@ -110,7 +110,7 @@ function updateGame(deltaTime) {
 	heliBullets = [];
 	level = null;
 
-	window.requestAnimFrame(endGame);
+	threadings["endGame"] = window.requestAnimFrame(endGame);
  }
 
 /*
@@ -155,7 +155,7 @@ function handleCollisions(){
 		}
 	});
 	level.getSection(level.currentSection).buildings.forEach(function(building) {
-		if (collides(building, godzilla)) { building.destroy(); }
+		if (collides(building, godzilla)) { level.getSection(level.currentSection).destroyBuilding(building); }
 		if (building.powerup != null && collides(building.powerup, godzilla)) { building.powerup.consume(); };
 	});
 }
