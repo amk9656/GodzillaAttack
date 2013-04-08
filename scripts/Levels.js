@@ -1,9 +1,6 @@
 //Level scripts go here
 
 //CONSTANTS
-var SECTION_TYPE_ROCK =		 { lightest: "#F2EFEB", lighter: "#BDB5AA", mid: "#959387", darker: "#8D8A83", darkest: "#68635F" },
-	SECTION_TYPE_VOLCANO =	 { lightest: "", lighter: "", mid: "", darker: "", darkest: "" },
-	SECTION_TYPE_GRASSLAND = { lightest: "", lighter: "", mid: "", darker: "", darkest: "" };
 
 //GLOBALS
 
@@ -18,7 +15,7 @@ window.Level = (function () {
 
 		for (var i = parseInt(this.size[0]) - 1; i >= 0; i--) {
 			for (var j = parseInt(this.size[1]) - 1; j >= 0; j--) {
-				this.sections[i+"x"+j] = new Section(SECTION_TYPE_ROCK, i+"x"+j);
+				this.sections[i+"x"+j] = new Section(i+"x"+j);
 			}
 		}
 
@@ -30,15 +27,16 @@ window.Level = (function () {
 	};
 
 	Level.prototype.edgedWith = function (side) {
-		// 1. get current section
-		var section = level.getSection(level.currentSection);
-		// 3. check if section exists
-		var adjacents = this.getSection(this.currentSection).getAdjacentSection(side);
-		if (adjacents != this.currentSection) { edgeGodzilla(side); } else { clampGodzilla(); }
-		// 5. set parameters
-		this.currentSection = adjacents;
+		var section = this.getSection(this.currentSection),
+		adjacents = this.getSection(this.currentSection).getAdjacentSection(side);
 
-		return adjacents;
+		if (adjacents != this.currentSection) { 
+			this.currentSection = adjacents;
+			return adjacents;
+		} else {
+			godzilla.clamp();
+			return false;
+		}
 	};
 
 	Level.prototype.drawCurrentSection = function () {
@@ -51,22 +49,26 @@ window.Level = (function () {
 	Function:
 */
 window.Section = (function () {
-	function Section (type, coordinates) {
-		this.type = type;
+	function Section (coordinates) {
 		this.coordinates = coordinates;
 		this.buildings = [];
 		this.powerups = [];
 
-		for (var i = Math.ceil(Math.random() * 15) - 1; i >= 0; i--) {
-			this.buildings.push(new Building(SECTION_TYPE_ROCK, randomPosition()));
+		for (var i = Math.ceil(Math.random() * 50) - 1; i >= 0; i--) {
+			this.buildings.push(new Building(randomPosition()));
 		};
 
 		return this;
 	}
 
 	Section.prototype.draw = function() {
-		ctx.fillStyle = this.type.lightest;
-		ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+		if (!images["tilesImage"]) {
+			ctx.fillStyle = "#F2EFEB";
+			ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+		} else {
+			ctx.fillStyle = ctx.createPattern(images["tilesImage"], "repeat");
+			ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+		}
 
 		for (var i = this.buildings.length - 1; i >= 0; i--) {
 			this.buildings[i].draw();
@@ -74,20 +76,20 @@ window.Section = (function () {
 	};
 
 	Section.prototype.getAdjacentSection = function(edgeWith) {
-		var coords = coordinates.split("x");
+		var coords = this.coordinates.split("x");
 		var size = level.size;
 		switch(edgeWith) {
 			case "top":
 				if (coords[0] >= 1) { coords[0]--; };
 				break;
 			case "bottom":
-				if (coords[0] <= size[0] - 1) { coords[0]++; };
+				if (coords[0] < size[0] - 1) { coords[0]++; };
 				break;
 			case "left":
 				if (coords[1] >= 1) { coords[1]--; };
 				break;
 			case "right":
-				if (coords[1] <= size[1] - 1) { coords[1]++; };
+				if (coords[1] < size[1] - 1) { coords[1]++; };
 				break;
 		}
 
@@ -100,18 +102,19 @@ window.Section = (function () {
 	Function:
 */
 window.Building = (function() {
-	function Building (type, position) {
-		this.type = type;
+	function Building (position) {
 		this.position = position;
 		this.x = position.x;
 		this.y = position.y;
-		this.width = 30;
-		this.height = 30;
+		this.width = 50;
+		this.height = 50;
+		this.spriteX = Math.floor(Math.random() * 8) * 50;
+		this.spriteY = Math.floor(Math.random() * 4) * 50;
 		this.isDestroyed = false;
 		this.powerup;
 
 		if(Math.random() > 0.5) {
-			this.powerup = new Powerup("health", this.position);
+			this.powerup = new Powerup(Math.floor(Math.random() * 3), this.position);
 		}
 
 		return this;
@@ -123,8 +126,18 @@ window.Building = (function() {
 		} else if (this.isDestroyed) {
 				// draw nothing
 		} else {
-			ctx.fillStyle = this.type.darker;
-			ctx.fillRect(this.x, this.y, this.width, this.height);
+			if (!images["buildingsImage"]) {
+				ctx.fillStyle = "#8D8A83";
+				ctx.fillRect(this.x, this.y, this.width, this.height);
+			} else {
+				ctx.drawImage(images["buildingsImage"], this.spriteX, this.spriteY, 50, 50, this.x, this.y, this.width, this.height);
+
+				ctx.fillStyle = "rgba(102,102,102,0)";
+				ctx.shadowColor = "#666";
+				ctx.shadowBlur = 10;
+				ctx.shadowOffsetY = 3;	
+				ctx.fillRect(this.x, this.y + this.height, this.width, 10);
+			}
 		}
 	};
 
@@ -146,22 +159,48 @@ window.Powerup = (function() {
 		this.y = position.y;
 		this.width = 10;
 		this.height = 10;
+		this.color = "white";
+		this.effect = null;
+
+		switch(this.type) {
+			case 0: // health
+				this.effect = function() { godzilla.health += 15 };
+				this.color = "#53BDFF";
+				break;
+			case 1:
+				this.effect = function() { godzilla.health -= 15 };
+				this.color = "#67FF53";
+				break;
+			case 2:
+				this.effect = function() { godzilla.health += 25 };
+				this.color = "#FFA349";
+				break;
+		}
 
 		return this;
 	}
 
 	Powerup.prototype.draw = function () {
 		if (!this.isConsumed) {
-			ctx.fillStyle = "#2EBCE9";
+			var gradient;
+
+			gradient = ctx.createRadialGradient(this.x - 2, this.y - 2, 2, this.x, this.y, this.width);
+			gradient.addColorStop(0, "white");
+			gradient.addColorStop(1, this.color);
+
+			ctx.fillStyle = gradient;
 			ctx.beginPath();
-			ctx.arc(this.x - 30, this.y - 35, 10, 0, Math.PI * 2);
+			ctx.arc(this.x, this.y, 10, 0, Math.PI * 2);
 			ctx.closePath();
 			ctx.fill();
 		};
 	};
 
 	Powerup.prototype.consume = function() {
-		this.isConsumed = true;
+		if (!this.isConsumed) {
+			this.isConsumed = true;
+			this.effect();
+		}
 	};
 
 	return Powerup;

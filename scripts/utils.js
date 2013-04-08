@@ -11,8 +11,21 @@ window.requestAnimFrame = (function(){
           window.mozRequestAnimationFrame    ||  
           window.oRequestAnimationFrame      ||  
           window.msRequestAnimationFrame     ||  
-          function( callback ){ window.setTimeout(callback, 1000 / 60); }; 
+          function( callback ){ 
+          	window.setTimeout(callback, 1000 / 60); 
+          }; 
 })(); 
+
+window.cancelAnimFrame = (function() {
+  return  window.cancelAnimationFrame       ||  
+          window.webkitCancelRequestAnimationFrame ||  
+          window.mozCancelAnimationFrame    ||  
+          window.oCancelAnimationFrame      ||  
+          window.msCancelAnimationFrame     ||  
+          function(id){ 
+            window.clearTimeout(id);
+          }; 
+})();
 
 
 /*

@@ -4,8 +4,6 @@ window.Bullet = (function(){
 	function Bullet(x,y,speed){	
 	this.x = x;
 	this.y = y;
-	this.godzillaX = godzilla.x;
-	this.godzillaY = godzilla.y;
 	
 	this.deltaX = godzilla.x - this.x;
 	this.deltaY = godzilla.y - this.y;
@@ -32,10 +30,17 @@ window.Bullet = (function(){
 		this.active = this.active && this.inBounds();
 	};
 	
-	Bullet.prototype.draw = function(ctx){
+	Bullet.prototype.draw = function(){
 		ctx.fillStyle = this.color;
 		ctx.fillRect(this.x, this.y, this.width, this.height);
 	};
+
+	Bullet.prototype.explode = function() {
+		if (this.active) {
+			this.active = false;
+			godzilla.health -= 5;
+		};
+	};
 	
 	return Bullet; 
-	})();
+})();

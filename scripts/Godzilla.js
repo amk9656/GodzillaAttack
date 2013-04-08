@@ -18,13 +18,16 @@ window.Godzilla = (function(){
 		this.color = "green";
 		this.x = 230;
 		this.y = 120;
-		this.width = 75;
-		this.height = 65;
-		this.attackWidth = 95;
-		this.attackHeight = 30;
+		this.width = 32;
+		this.height = 32;
+		this.spriteX = 0;
+		this.spriteY = 0;
 		this.speed = 200;
 		this.health = 100;
 		this.isDead = false;
+
+		this.attackWidth = 95;
+		this.attackHeight = 30;
 
 		window.addEventListener("keydown",function(e){
 			keydown[e.keyCode] = true;
@@ -34,42 +37,58 @@ window.Godzilla = (function(){
 		});
 	};
 
-	Godzilla.prototype.draw = function(ctx)
-	{
-		ctx.fillStyle = this.color;
-		ctx.fillRect(this.x,this.y, this.width, this.height);
-		//ctx.drawImage(images["imagenamehere"], source coordinate x, source coordinate y, source width, sourch height, this.x, this.y, this.width, this.height);
+	Godzilla.prototype.draw = function() {
+		if (!images["playerImage"]) {
+			ctx.fillStyle = this.color;
+			ctx.fillRect(this.x,this.y, this.width, this.height);
+		} else {
+			ctx.drawImage(images["playerImage"], this.spriteX, this.spriteY, 32, 32, this.x, this.y, this.width, this.height);
+		}
 	};
-	
-	Godzilla.prototype.update = function(deltaTime)
-	{
-		var clampX = isClamped(this.x, 0, CANVAS_WIDTH - (this.width)),
-		clampY = isClamped(this.y, 0, CANVAS_HEIGHT - (this.height));
+
+	Godzilla.prototype.edge = function() {
+		var clampX = isClamped(this.x, 0, CANVAS_WIDTH - this.width),
+		clampY = isClamped(this.y, 0, CANVAS_HEIGHT - this.height);
 
 		if (clampX == "max") {
-			this.x = 1;
-			level.edgedWith("right");
+			if(level.edgedWith("right")) {
+				this.x = this.width / 2;
+			}
 		} else if (clampX == "min") {
-			this.x = CANVAS_WIDTH - this.width - 1;
-			level.edgedWith("left");
+			if(level.edgedWith("left")) {
+				this.x = CANVAS_WIDTH - this.width;
+			}
 		} else if (clampY == "max") {
-			this.y = 1;
-			level.edgedWith("bottom");
+			if(level.edgedWith("bottom")) {
+				this.y = this.height / 2;
+			}
 		} else if (clampY == "min") {
-			this.y = CANVAS_HEIGHT - this.height - 1;
-			level.edgedWith("top");
+			if(level.edgedWith("top")) {
+				this.y = CANVAS_HEIGHT - this.height;
+			}
 		}
+	};
 
-		if(keydown[KEYBOARD.KEY_LEFT]){			
+	Godzilla.prototype.clamp = function() {
+		this.x = clamp(this.x, 0, CANVAS_WIDTH - this.width);
+		this.y = clamp(this.y, 0, CANVAS_HEIGHT - this.height);
+	};
+	
+	Godzilla.prototype.update = function(deltaTime) {
+		if(keydown[KEYBOARD.KEY_LEFT]){
+			this.spriteX = 0;	
 			this.x -= this.speed * deltaTime;
 		}
 		if(keydown[KEYBOARD.KEY_RIGHT]){
+			this.spriteX = 32;
 			this.x += this.speed * deltaTime;
 		}
 		if(keydown[KEYBOARD.KEY_UP]){
+			this.spriteY = 32;
 			this.y -= this.speed * deltaTime;
 		}
 		if(keydown[KEYBOARD.KEY_DOWN]){
+			this.spriteY = 0;
 			this.y += this.speed * deltaTime;
 		}
 		if(keydown[KEYBOARD.KEY_SPACE])
@@ -78,15 +97,19 @@ window.Godzilla = (function(){
 			ctx.fillRect(this.x - 10, this.y - (this.height/3),this.attackWidth, this.attackHeight);
 			console.log(hello);
 		}
+
+		this.edge();
 		handleCollisions();
 
-		if(this.health <= 0 && !this.isDead)
-		{
+		if(this.health <= 0 && !this.isDead) {
 			this.isDead = true;
+			ui.switchUI("endGame");
 			endGame();
-			console.log("You have died");
+		} else if (this.health >= 100 && !this.isDead) {
+			this.health = 100;
 		}
 
 	};
+
 	return Godzilla;
 })();

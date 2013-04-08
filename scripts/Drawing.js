@@ -3,12 +3,13 @@
 //CONSTANTS
 var IMAGE_SOURCES = {
 	playerImage: "godzilla.png",
-	enemyImage: "",
-	buildingImage: ""
+	tilesImage: "tiles.png",
+	enemyImage: "tank.png",
+	buildingsImage: "houses.png"
 };
 
 //GLOBALS
-var spawnTime = 0, shootTime = 0;
+var spawnTime = 0, shootTime = 0, threadings = {}, lastTime = 0;
 
 /*
  *	Function: AnimateGame()
@@ -18,6 +19,9 @@ var spawnTime = 0, shootTime = 0;
 function AnimateGame()
 {
 	var deltaTime = calculateDeltaTime();	
+
+	ctx.fillStyle="gray";
+	ctx.fillRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
 
 	//	calling updating functions
 	updateGame(deltaTime);
@@ -39,7 +43,7 @@ function AnimateGame()
 		bullet.draw(ctx);
 	});
 
-	window.requestAnimFrame(AnimateGame);
+	threadings["Game"] = window.requestAnimFrame(AnimateGame);
 }
 
 /*
@@ -49,34 +53,34 @@ function AnimateGame()
 function AnimateUI () {
 	var deltaTime = calculateDeltaTime();
 
+	// document.querySelector("#canvas").width = CANVAS_WIDTH;
+	ctx.fillStyle="gray";
+	ctx.fillRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
+
 	// ui.updateUI(deltaTime);
 	ui.drawUI();
 
-	window.requestAnimFrame(AnimateUI);
+	threadings["UI"] = window.requestAnimFrame(AnimateUI);
 }
 
 function updateGame(deltaTime) {			
-	if(helicopters.length < 3)
-	{
+	if(helicopters.length < 3) {
 		spawnTime += deltaTime;
 	}
+
 	helicopters.forEach(function(heli)
 	{
 		heli.update(deltaTime);
-	});
-	helicopters = helicopters.filter(function(heli) {
-		return heli.active;
-	});
-	
-	helicopters.forEach(function(heli)
-	{
+
 		shootTime += deltaTime;
 		if(shootTime >= 4)
 		{
-			console.log(heliBullets);
-			shoot(heli.x,heli.y);
+			heli.shoot();
 			shootTime = 0;
 		}
+	});
+	helicopters = helicopters.filter(function(heli) {
+		return heli.active;
 	});
 	
 	heliBullets.forEach(function(bullet){
@@ -93,9 +97,29 @@ function updateGame(deltaTime) {
  *
  *
  */
+ function endGame () {
+ 	var deltaTime = calculateDeltaTime();
+
+ 	ctx.fillStyle="gray";
+	ctx.fillRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
+
+	ui.drawUI();
+
+	godzilla = null;
+	helicopters = [];
+	heliBullets = [];
+	level = null;
+
+	window.requestAnimFrame(endGame);
+ }
+
+/*
+ *
+ *
+ *
+ */
 function loadImages(){
-	var numLoadedImages = 0;
-	var numImages = 0;		
+	var numLoadedImages = 0, numImages = 0;		
 	for (var imageName in IMAGE_SOURCES){
 		numImages++;
 		}
@@ -120,25 +144,17 @@ function loadImages(){
  *
  */
 function handleCollisions(){
-	helicopters.forEach(function(heli)
-	{
-		if(collides(heli, godzilla))
-		{
-			console.log(godzilla.health);
-			godzilla.health -= 5;
+	helicopters.forEach(function(heli) {
+		if(collides(heli, godzilla)) {
 			heli.explode();	
 		}		
 	});
-	heliBullets.forEach(function(bullet)
-	{
-		if(collides(bullet, godzilla))
-		{
-			godzilla.health -=5;
-			bullet.active = false;
+	heliBullets.forEach(function(bullet) {
+		if(collides(bullet, godzilla)) {
+			bullet.explode();
 		}
 	});
-	level.getSection(level.currentSection).buildings.forEach(function(building)
-	{		
+	level.getSection(level.currentSection).buildings.forEach(function(building) {
 		if (collides(building, godzilla)) { building.destroy(); }
 		if (building.powerup != null && collides(building.powerup, godzilla)) { building.powerup.consume(); };
 	});
