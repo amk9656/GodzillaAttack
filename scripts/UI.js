@@ -71,18 +71,17 @@ window.UI = (function() {
 	};
 
 	function createStartGameUI() {
-		var gradient, startGameBtn, creditBtn;
-
-		gradient = ctx.createLinearGradient(0, 0, 0, 50);
-		gradient.addColorStop(0, "rgb(201,22,150)");
-		gradient.addColorStop("0.44", "rgb(138,182,107)");
-		gradient.addColorStop(1, "rgb(57,130,53)");
+		var startGameBtn, creditBtn;
 
 		startGameBtn = new UIElement({ type: "button", text: "start", x: 170, y: 300, width: 300, height:50, callback: function() {
 					ui.switchUI("game");
 					if (level == null) { initGame(); };
 				}, draw: function() {
-					var grad = gradient;
+					var gradient;
+
+					gradient = ctx.createLinearGradient(this.x, this.y, this.x, this.y + this.height);
+					gradient.addColorStop(0, "#2fc900");
+					gradient.addColorStop(1, "#299a0b");
 		
 					ctx.font = "30px Georgia";
 					ctx.strokeStyle = "black";
@@ -91,7 +90,7 @@ window.UI = (function() {
 					ctx.shadowBlur = 10;
 					ctx.shadowOffsetY = 1;
 		
-					ctx.fillStyle = grad;
+					ctx.fillStyle = gradient;
 					ctx.fillRect(this.x, this.y, this.width, this.height);
 					ctx.strokeRect(this.x, this.y, this.width, this.height);
 		
@@ -104,9 +103,13 @@ window.UI = (function() {
 		
 				} });
 
-		creditBtn = new UIElement({ type: "button", text: "credit", x: 170, y: 380, width: 300, height:50, callback: function() { ui.switchUI("credit"); 
+		creditBtn = new UIElement({ type: "button", text: "credit", x: 170, y: 380, width: 300, height: 50, callback: function() { ui.switchUI("credit"); 
 				}, draw: function() {
-					var grad = gradient;
+					var gradient;
+
+					gradient = ctx.createLinearGradient(this.x, this.y, this.x, this.y + this.height);
+					gradient.addColorStop(0, "#2fc900");
+					gradient.addColorStop(1, "#299a0b");
 		
 					ctx.font = "30px Georgia";
 					ctx.strokeStyle = "black";
@@ -115,7 +118,7 @@ window.UI = (function() {
 					ctx.shadowBlur = 10;
 					ctx.shadowOffsetY = 1;	
 		
-					ctx.fillStyle = grad;
+					ctx.fillStyle = gradient;
 					ctx.fillRect(this.x, this.y, this.width, this.height);
 					ctx.strokeRect(this.x, this.y, this.width, this.height);
 		
@@ -134,24 +137,77 @@ window.UI = (function() {
 	};
 
 	function createGameUI() {
-		var healthGradient, healthBar;
+		var healthBar;
 
 		healthBar = new UIElement({ type: "shape", x: 0, y: 0, width: CANVAS_WIDTH, height: 15, draw: function() {
-				ctx.fillStyle = healthGradient;
-				ctx.strokeStyle = "black";
-				ctx.lineWidth = "2px";
+			var healthGradient = ctx.createLinearGradient(0, 0, CANVAS_WIDTH, 0);
+			healthGradient.addColorStop(0, "rgba(255,48,25,0.6)");
+			healthGradient.addColorStop(1, "rgba(207,4,4,0.6)");
 
-				ctx.fillRect(healthBar.x, healthBar.y, healthBar.width * (godzilla.health / 100), healthBar.height);
-				ctx.strokeRect(healthBar.x, healthBar.y, healthBar.width, healthBar.height);
-			}, animate: function(dt) {
+			ctx.fillStyle = healthGradient;
+			ctx.strokeStyle = "rgba(0,0,0,0.6)";
+			ctx.lineWidth = "2px";
 
-			} });
+			ctx.fillRect(healthBar.x, healthBar.y, healthBar.width * (godzilla.health / 100), healthBar.height);
+			ctx.strokeRect(healthBar.x, healthBar.y, healthBar.width, healthBar.height);
+		}, animate: function(dt) {
+
+		} });
 
 		ui.drawableElements.push(healthBar);
 	};
 
 	function createCreditUI() {
-		
+		var creditBar, backBtn;
+
+		creditBar = new UIElement({ type: "shape", x: 170, y: 30, width: 300, height: 50, text: "credit", draw: function() {
+			var gradient;
+
+			gradient = ctx.createLinearGradient(this.x, this.y, this.x, this.y + this.height);
+			gradient.addColorStop(0, "#2fc900");
+			gradient.addColorStop(1, "#299a0b");
+
+			ctx.font = "30px Georgia";
+			ctx.strokeStyle = "black";
+			ctx.lineWidth = "2px";
+			ctx.shadowColor = "#666";
+			ctx.shadowBlur = 10;
+			ctx.shadowOffsetY = 1;	
+			ctx.fillStyle = gradient;
+
+			ctx.fillRect(this.x, this.y, this.width, this.height);
+			ctx.strokeRect(this.x, this.y, this.width, this.height);
+
+			ctx.fillStyle = "black";
+			ctx.shadowColor = "transparent";
+			ctx.shadowBlur = 0;
+			ctx.shadowOffsetY = 0;
+			ctx.fillText(this.text, this.x + 110, this.y + 35);
+		}, animate: function(dt) {
+
+		} });
+
+		backBtn = new UIElement({ type: "button", x: 50, y: 30, width: 40, height: 50, draw: function() {
+			ctx.fillStyle = "#ddd";
+			ctx.strokeStyle = "black";
+			ctx.shadowColor = "#666";
+			ctx.shadowBlur = 10;
+			ctx.shadowOffsetY = 1;
+
+			ctx.moveTo(this.x, this.y + (this.height / 2));
+			ctx.lineTo(this.x + this.width, this.y + this.height);
+			ctx.lineTo(this.x + this.width, this.y);
+			ctx.lineTo(this.x, this.y + (this.height / 2));
+			ctx.stroke();
+			ctx.fill();
+		}, callback: function() {
+			ui.switchUI("startGame");
+		}, animate: function(dt) {
+			
+		} });
+
+		ui.drawableElements.push(creditBar, backBtn);
+		ui.clickableElements.push(backBtn);
 	};
 
 	function createEndGameUI() {
@@ -159,9 +215,14 @@ window.UI = (function() {
 
 		restartBtn = new UIElement({ type: "button", text: "restart", x: 170, y: 380, width: 300, height:50, 
 			callback: function() { 
-				ui.switchUI("game"); 
+				ui.switchUI("game");
+				if (level == null) { initGame(); };
 			}, draw: function() {
-				var grad = gradient;
+				var gradient;
+
+				gradient = ctx.createLinearGradient(this.x, this.y, this.x, this.y + this.height);
+				gradient.addColorStop(0, "#2fc900");
+				gradient.addColorStop(1, "#299a0b");
 	
 				ctx.font = "30px Georgia";
 				ctx.strokeStyle = "black";
@@ -170,7 +231,7 @@ window.UI = (function() {
 				ctx.shadowBlur = 10;
 				ctx.shadowOffsetY = 1;	
 	
-				ctx.fillStyle = grad;
+				ctx.fillStyle = gradient;
 				ctx.fillRect(this.x, this.y, this.width, this.height);
 				ctx.strokeRect(this.x, this.y, this.width, this.height);
 	
@@ -183,6 +244,9 @@ window.UI = (function() {
 	
 			}
 		});
+
+		ui.drawableElements.push(restartBtn);
+		ui.clickableElements.push(restartBtn);
 	};
 
 	return UI;
