@@ -101,11 +101,12 @@ window.Godzilla = (function(){
 		this.edge();
 		handleCollisions();
 
-		if(this.health <= 0 && !this.isDead)
-		{
+		if(this.health <= 0 && !this.isDead) {
 			this.isDead = true;
 			ui.switchUI("endGame");
 			endGame();
+		} else if (this.health >= 100 && !this.isDead) {
+			this.health = 100;
 		}
 
 	};

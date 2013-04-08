@@ -62,8 +62,13 @@ window.Section = (function () {
 	}
 
 	Section.prototype.draw = function() {
-		ctx.fillStyle = "#F2EFEB";
-		ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+		if (!images["tilesImage"]) {
+			ctx.fillStyle = "#F2EFEB";
+			ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+		} else {
+			ctx.fillStyle = ctx.createPattern(images["tilesImage"], "repeat");
+			ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+		}
 
 		for (var i = this.buildings.length - 1; i >= 0; i--) {
 			this.buildings[i].draw();
@@ -109,7 +114,7 @@ window.Building = (function() {
 		this.powerup;
 
 		if(Math.random() > 0.5) {
-			this.powerup = new Powerup("health", this.position);
+			this.powerup = new Powerup(Math.floor(Math.random() * 3), this.position);
 		}
 
 		return this;
@@ -126,6 +131,12 @@ window.Building = (function() {
 				ctx.fillRect(this.x, this.y, this.width, this.height);
 			} else {
 				ctx.drawImage(images["buildingsImage"], this.spriteX, this.spriteY, 50, 50, this.x, this.y, this.width, this.height);
+
+				ctx.fillStyle = "rgba(102,102,102,0)";
+				ctx.shadowColor = "#666";
+				ctx.shadowBlur = 10;
+				ctx.shadowOffsetY = 3;	
+				ctx.fillRect(this.x, this.y + this.height, this.width, 10);
 			}
 		}
 	};
@@ -148,22 +159,48 @@ window.Powerup = (function() {
 		this.y = position.y;
 		this.width = 10;
 		this.height = 10;
+		this.color = "white";
+		this.effect = null;
+
+		switch(this.type) {
+			case 0: // health
+				this.effect = function() { godzilla.health += 15 };
+				this.color = "#53BDFF";
+				break;
+			case 1:
+				this.effect = function() { godzilla.health -= 15 };
+				this.color = "#67FF53";
+				break;
+			case 2:
+				this.effect = function() { godzilla.health += 25 };
+				this.color = "#FFA349";
+				break;
+		}
 
 		return this;
 	}
 
 	Powerup.prototype.draw = function () {
 		if (!this.isConsumed) {
-			ctx.fillStyle = "#2EBCE9";
+			var gradient;
+
+			gradient = ctx.createRadialGradient(this.x - 2, this.y - 2, 2, this.x, this.y, this.width);
+			gradient.addColorStop(0, "white");
+			gradient.addColorStop(1, this.color);
+
+			ctx.fillStyle = gradient;
 			ctx.beginPath();
-			ctx.arc(this.x - 30, this.y - 35, 10, 0, Math.PI * 2);
+			ctx.arc(this.x, this.y, 10, 0, Math.PI * 2);
 			ctx.closePath();
 			ctx.fill();
 		};
 	};
 
 	Powerup.prototype.consume = function() {
-		this.isConsumed = true;
+		if (!this.isConsumed) {
+			this.isConsumed = true;
+			this.effect();
+		}
 	};
 
 	return Powerup;

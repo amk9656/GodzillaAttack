@@ -1,3 +1,7 @@
+body {
+	font-family: 'Geo', sans-serif;
+}
+
 header {
 	background: rgb(135,224,253); /* Old browsers */
 	background: -moz-linear-gradient(top,  rgb(135,224,253) 0%, rgb(83,203,241) 40%, rgb(5,171,224) 100%); /* FF3.6+ */

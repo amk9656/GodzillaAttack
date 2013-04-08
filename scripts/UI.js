@@ -71,67 +71,79 @@ window.UI = (function() {
 	};
 
 	function createStartGameUI() {
-		var startGameBtn, creditBtn;
+		var logo, startGameBtn, creditBtn;
+
+		logo = new UIElement({ type: "text", text: "Godzilla Attack", x: 0, y: 160, draw: function() {
+			ctx.font = "60px Geo";
+			ctx.fillStyle = "black";
+			ctx.shadowColor = "#666";
+			ctx.shadowBlur = 10;
+			ctx.shadowOffsetY = 1;
+
+			this.x = (CANVAS_WIDTH - ctx.measureText(this.text).width) / 2;
+
+			ctx.fillText(this.text, this.x, this.y);
+		} });
 
 		startGameBtn = new UIElement({ type: "button", text: "start", x: 170, y: 300, width: 300, height:50, callback: function() {
-					ui.switchUI("game");
-					if (level == null) { initGame(); };
-				}, draw: function() {
-					var gradient;
+			ui.switchUI("game");
+			if (level == null) { initGame(); };
+		}, draw: function() {
+			var gradient;
 
-					gradient = ctx.createLinearGradient(this.x, this.y, this.x, this.y + this.height);
-					gradient.addColorStop(0, "#2fc900");
-					gradient.addColorStop(1, "#299a0b");
-		
-					ctx.font = "30px Georgia";
-					ctx.strokeStyle = "black";
-					ctx.lineWidth = "2px";
-					ctx.shadowColor = "#666";
-					ctx.shadowBlur = 10;
-					ctx.shadowOffsetY = 1;
-		
-					ctx.fillStyle = gradient;
-					ctx.fillRect(this.x, this.y, this.width, this.height);
-					ctx.strokeRect(this.x, this.y, this.width, this.height);
-		
-					ctx.fillStyle = "black";
-					ctx.shadowColor = "transparent";
-					ctx.shadowBlur = 0;
-					ctx.shadowOffsetY = 0;
-					ctx.fillText(this.text, this.x + 120, this.y + 35);
-				}, animate: function(dt) {
-		
-				} });
+			gradient = ctx.createLinearGradient(this.x, this.y, this.x, this.y + this.height);
+			gradient.addColorStop(0, "#2fc900");
+			gradient.addColorStop(1, "#299a0b");
+
+			ctx.font = "30px Geo";
+			ctx.strokeStyle = "black";
+			ctx.lineWidth = "2px";
+			ctx.shadowColor = "#666";
+			ctx.shadowBlur = 10;
+			ctx.shadowOffsetY = 1;
+
+			ctx.fillStyle = gradient;
+			ctx.fillRect(this.x, this.y, this.width, this.height);
+			ctx.strokeRect(this.x, this.y, this.width, this.height);
+
+			ctx.fillStyle = "black";
+			ctx.shadowColor = "transparent";
+			ctx.shadowBlur = 0;
+			ctx.shadowOffsetY = 0;
+			ctx.fillText(this.text, this.x + 120, this.y + 35);
+		}, animate: function(dt) {
+
+		} });
 
 		creditBtn = new UIElement({ type: "button", text: "credit", x: 170, y: 380, width: 300, height: 50, callback: function() { ui.switchUI("credit"); 
-				}, draw: function() {
-					var gradient;
+		}, draw: function() {
+			var gradient;
 
-					gradient = ctx.createLinearGradient(this.x, this.y, this.x, this.y + this.height);
-					gradient.addColorStop(0, "#2fc900");
-					gradient.addColorStop(1, "#299a0b");
-		
-					ctx.font = "30px Georgia";
-					ctx.strokeStyle = "black";
-					ctx.lineWidth = "2px";
-					ctx.shadowColor = "#666";
-					ctx.shadowBlur = 10;
-					ctx.shadowOffsetY = 1;	
-		
-					ctx.fillStyle = gradient;
-					ctx.fillRect(this.x, this.y, this.width, this.height);
-					ctx.strokeRect(this.x, this.y, this.width, this.height);
-		
-					ctx.fillStyle = "black";
-					ctx.shadowColor = "transparent";
-					ctx.shadowBlur = 0;
-					ctx.shadowOffsetY = 0;
-					ctx.fillText(this.text, this.x + 110, this.y + 35);
-				}, animate: function(dt) {
-		
-				} });
+			gradient = ctx.createLinearGradient(this.x, this.y, this.x, this.y + this.height);
+			gradient.addColorStop(0, "#2fc900");
+			gradient.addColorStop(1, "#299a0b");
 
-		ui.drawableElements.push(startGameBtn, creditBtn);
+			ctx.font = "30px Geo";
+			ctx.strokeStyle = "black";
+			ctx.lineWidth = "2px";
+			ctx.shadowColor = "#666";
+			ctx.shadowBlur = 10;
+			ctx.shadowOffsetY = 1;	
+
+			ctx.fillStyle = gradient;
+			ctx.fillRect(this.x, this.y, this.width, this.height);
+			ctx.strokeRect(this.x, this.y, this.width, this.height);
+
+			ctx.fillStyle = "black";
+			ctx.shadowColor = "transparent";
+			ctx.shadowBlur = 0;
+			ctx.shadowOffsetY = 0;
+			ctx.fillText(this.text, this.x + 110, this.y + 35);
+		}, animate: function(dt) {
+
+		} });
+
+		ui.drawableElements.push(startGameBtn, creditBtn, logo);
 		ui.clickableElements.push(startGameBtn, creditBtn);
 		ui.animatableElements.push(startGameBtn, creditBtn);
 	};
@@ -167,7 +179,7 @@ window.UI = (function() {
 			gradient.addColorStop(0, "#2fc900");
 			gradient.addColorStop(1, "#299a0b");
 
-			ctx.font = "30px Georgia";
+			ctx.font = "30px Geo";
 			ctx.strokeStyle = "black";
 			ctx.lineWidth = "2px";
 			ctx.shadowColor = "#666";
@@ -188,7 +200,7 @@ window.UI = (function() {
 		} });
 
 		backBtn = new UIElement({ type: "button", x: 50, y: 30, width: 40, height: 50, draw: function() {
-			ctx.fillStyle = "#ddd";
+			ctx.fillStyle = "#333";
 			ctx.strokeStyle = "black";
 			ctx.shadowColor = "#666";
 			ctx.shadowBlur = 10;
@@ -215,8 +227,10 @@ window.UI = (function() {
 
 		restartBtn = new UIElement({ type: "button", text: "restart", x: 170, y: 380, width: 300, height:50, 
 			callback: function() { 
-				ui.switchUI("game");
-				if (level == null) { initGame(); };
+				if (level == null) { 
+					ui.switchUI("game");
+					initGame(); 
+				};
 			}, draw: function() {
 				var gradient;
 
@@ -224,7 +238,7 @@ window.UI = (function() {
 				gradient.addColorStop(0, "#2fc900");
 				gradient.addColorStop(1, "#299a0b");
 	
-				ctx.font = "30px Georgia";
+				ctx.font = "30px Geo";
 				ctx.strokeStyle = "black";
 				ctx.lineWidth = "2px";
 				ctx.shadowColor = "#666";
